@@ -8,7 +8,7 @@ from absl import flags
 
 # define paths
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-RESSOURCES_PATH = os.path.join(BASE_PATH, "ressources")
+RESOURCES_PATH = os.path.join(BASE_PATH, "resources")
 MECABRC_PATH = '/opt/homebrew/etc/mecabrc'
 os.environ['MECABRC'] = MECABRC_PATH
 
@@ -32,13 +32,13 @@ if __name__ == '__main__':
     mecab_ipadic_neologd = '/opt/homebrew/lib/mecab/dic/mecab-ipadic-neologd'
 
     # path to the J-Medic (We used MANBYO_201907_Dic-utf8.dic)
-    mecab_J_medic = os.path.join(RESSOURCES_PATH, "MANBYO_201907_Dic-utf8.dic")
+    mecab_J_medic = os.path.join(RESOURCES_PATH, "MANBYO_201907_Dic-utf8.dic")
 
     # path to the uth-bert vocabulary
-    vocab_file_jap = os.path.join(RESSOURCES_PATH, "uthbert_vocab.txt")
+    vocab_file_jap = os.path.join(RESOURCES_PATH, "uthbert_vocab.txt")
     
     # path to the BioBert vocabulary
-    vocab_file_eng = os.path.join(RESSOURCES_PATH, "biobert_vocab.txt")
+    vocab_file_eng = os.path.join(RESOURCES_PATH, "biobert_vocab.txt")
     
     # MecabTokenizer
     sub_tokenizer = MecabTokenizer(mecab_ipadic_neologd=mecab_ipadic_neologd,

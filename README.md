@@ -1,11 +1,20 @@
 # Pre-processing SOAP text and hybrid tokenization
 For the time being, this folder provides source code for pre-processing SOAP text and hybrid tokenization.<br>
 
-To run hybrid_tokenization.py, you might need to adapt the paths to mecabrc and mecab-ipadic-neologd depending on your OS and installation
+!!!Info To run hybrid_tokenization.py, you might need to adapt the paths to mecabrc and mecab-ipadic-neologd depending on your OS and installation
 
 ## 1. :zap: Quick setup :zap:
 
 ### 1-1. Install Mecab (Japanese morphological analyzer)
+
+https://github.com/jinseikenai/uth-bert/blob/master/README.md
+
+Mac の場合：https://qiita.com/paulxll/items/72a2bea9b1d1486ca751
+
+- path to mecabrc: /opt/homebrew/etc/mecabrc
+- path to mecab-ipadic-neologd: /opt/homebrew/lib/mecab/dic/mecab-ipadic-neologd
+
+
 
 ### 1-2. Install mecab-ipadic-neologd (general dictionary for Mecab)
 
@@ -21,7 +30,17 @@ dicdir = /path/to/mecabrc<br>
 You can download `MANBYO_201907_Dic-utf8.dic` from the URL below.<br>
 http://sociocom.jp/~data/2018-manbyo/index.html<br>
 
-## 2. Pre-processing text
+
+### 1-4. Install neologdn
+
+The installation of neologdn requires python 3.11 or python 3.10 (Cf. https://pypi.org/project/neologdn/)>
+
+After installing python 3.11, change VSCode python version to 3.11>
+
+`pip3.11 install neologdn`
+
+
+## 2. Pre-processing text<br>
 
 There is a preprocessing function tailored for Japanese text. Initially, it employs Neologd normalization, a process specifically designed for Japanese text, to standardize various linguistic aspects. Following this, it applies Unicode normalization using the NFKC form, ensuring consistency in character representation. Further, it replaces both English and full-width commas with a uniform separator, "、", promoting uniformity. Lastly, it eliminates full-width spaces, thereby optimizing the text for subsequent processing tasks. This comprehensive preprocessing sequence primes the text for effective handling and analysis.<br>
 
