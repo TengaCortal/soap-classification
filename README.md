@@ -1,7 +1,7 @@
 # Pre-processing SOAP text and hybrid tokenization
 For the time being, this folder provides source code for pre-processing SOAP text and hybrid tokenization.<br>
 
-!!!info To run hybrid_tokenization.py, you might need to adapt the paths to mecabrc and mecab-ipadic-neologd depending on your OS and installation.
+To run hybrid_tokenization.py, you might need to adapt the paths to mecabrc and mecab-ipadic-neologd depending on your OS and installation
 
 ## 1. :zap: Quick setup :zap:
 
