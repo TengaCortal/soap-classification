@@ -6,8 +6,8 @@ For detailed instructions on running the scripts and understanding their output,
 
 ## Table of Contents
 
-1. [Pre-processing SOAP Text and Hybrid Tokenization](preprocessing/README.md)
-2. [SOAP Dataset Processing](data-cleaning/README.md)
+1. [Pre-processing SOAP Text and Hybrid Tokenization](soap-classification/preprocessing/README.md)
+2. [SOAP Dataset Processing](soap-classification/data-cleaning/README.md)
 
 
 
