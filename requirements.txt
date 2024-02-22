@@ -1,14 +1,9 @@
-# python 3.11
-# MeCab
-# pandas
-# bert-tensorflow
-# re
-# os 
-# csv
-# sys
-# neologdn
-# six
-# tensorflow
-# absl
-# mecab-python3
+pandas
+regex
+six
+tensorflow
+bert-tensorflow
+neologdn
+mecab-python3
+
 

@@ -6,7 +6,20 @@ For the time being, this folder provides source code for pre-processing SOAP tex
 
 ## 1. :zap: Quick setup :zap:
 
-### 1-1. Install Mecab (Japanese morphological analyzer)
+### 1-1. Execute setup.py 
+Navigate to the root directory of the project and run the following command:
+`python3 setup.py`
+
+This will install python version 3.11 (required for neologdn) and the libraries that are required to execute the different modules.
+
+> [!WARNING]
+> If you are on a Windows-based OS, install python 3.11 manually and then run the folllowing command: 
+>`python3.11 setup.py -c "install_libraries"`
+
+Don't forget to change your VSCode python interpreter to version 3.11.
+
+
+### 1-2. Install Mecab (Japanese morphological analyzer)
 
 https://github.com/jinseikenai/uth-bert/blob/master/README.md
 
@@ -16,29 +29,15 @@ Mac の場合：https://qiita.com/paulxll/items/72a2bea9b1d1486ca751
 - path to mecab-ipadic-neologd: /opt/homebrew/lib/mecab/dic/mecab-ipadic-neologd
 
 
-
-### 1-2. Install mecab-ipadic-neologd (general dictionary for Mecab)
+### 1-3. Install mecab-ipadic-neologd (general dictionary for Mecab)
 
 `git clone https://github.com/neologd/mecab-ipadic-neologd.git`<br>
 `cd mecab-ipadic-neologd`<br>
 `sudo bin/install-mecab-ipadic-neologd -n -a`<br>
 
-#### Edit /etc/mecabrc<br>
+
+### 1-4. Edit /etc/mecabrc<br>
 dicdir = /path/to/mecabrc<br>
-
-### 1-3. Download J-Medic (medical dictionary for Mecab)
-
-You can download `MANBYO_201907_Dic-utf8.dic` from the URL below.<br>
-http://sociocom.jp/~data/2018-manbyo/index.html<br>
-
-
-### 1-4. Install neologdn
-
-The installation and use of neologdn requires python 3.11 or python 3.10 (Cf. https://pypi.org/project/neologdn/)
-
-After installing python 3.11, change VSCode python version to 3.11
-
-`pip3.11 install neologdn`
 
 
 ## 2. Pre-processing text<br>
