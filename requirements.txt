@@ -1,3 +1,5 @@
+# python 3.11
+# MeCab
 # pandas
 # bert-tensorflow
 # re
@@ -7,4 +9,6 @@
 # neologdn
 # six
 # tensorflow
+# absl
+# mecab-python3
 
