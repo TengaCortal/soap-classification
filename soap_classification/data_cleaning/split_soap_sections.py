@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import csv
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOAPS_PATH = os.path.join(BASE_PATH, "resources/soaps")
@@ -44,21 +45,25 @@ def create_section_csv(cleaned_classified_soaps_path, output_dir):
     """
     # Read the cleaned and classified SOAP notes CSV file
     soaps_df = pd.read_csv(cleaned_classified_soaps_path)
-
     # Extract and save each section as a separate CSV file
     sections = ["SUB", "OBJ", "ASM", "PLN"]
     for section in sections:
         section_df = extract_section(soaps_df, section)
-        output_path = f"{output_dir}/{section.lower()}_sections.csv"
+        output_path = os.path.join(output_dir, f"{section.lower()}_sections.csv")
         section_df.to_csv(output_path, index=False)
         print(f"{section} section CSV file saved to: {output_path}")
 
-        if section == "PLN":
-            with open(output_path, "r") as file:
-                lines = file.readlines()
-            with open(output_path, "w") as file:
-                for line in lines:
-                    line = line.replace('"', "")
+    # Remove all double quotes from each CSV file
+    for section in sections:
+        output_path = os.path.join(output_dir, f"{section.lower()}_sections.csv")
+        with open(output_path, "r") as file:
+            lines = file.readlines()
+        with open(output_path, "w") as file:
+            for line in lines:
+                line = line.replace('"', "")
+                line = line.replace(",", "")
+                # Write line only if it's not empty
+                if line.strip():
                     file.write(line)
 
 
