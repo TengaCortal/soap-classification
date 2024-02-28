@@ -2,7 +2,7 @@
 
 This set of Python scripts processes SOAP (Subjective, Objective, Assessment, Plan) data stored in CSV files. Each script performs a specific task in the processing pipeline, from data retrieval to text cleaning and vocabulary extraction. Below is an overview of each script, along with its input and output.
 
-| Script Name            | Description                                                                                  | Input                          | Output                         |
+| Script Name            | <div style="width:290px">Description </div>                                                                                 | Input                          | Output                         |
 |------------------------|----------------------------------------------------------------------------------------------|--------------------------------|--------------------------------|
 | `only_soap.py`         | Extracts the first column from a CSV file containing SOAP data.                                | `processed_data_clinicName/DB_soap_orderCode.csv` | `clinicName_soap.csv` containing only the first column |
 | `regex.py`             | Counts the number of rows containing a specific regex pattern in a CSV file.                 | `clinicName_soap.csv`             | Number of matching rows        |
