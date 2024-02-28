@@ -3,6 +3,7 @@ import os
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_PATH, "resources/processed_data")
+SOAPS_PATH = os.path.join(BASE_PATH, "resources/soaps/by_clinic")
 
 if __name__ == "__main__":
     # Read the initial CSV file
@@ -17,4 +18,4 @@ if __name__ == "__main__":
     new_csv_filename = "10213_soap.csv"
 
     # Save the new DataFrame to the specified CSV file
-    new_df.to_csv(new_csv_filename, index=False)
+    new_df.to_csv(os.path.join(SOAPS_PATH, new_csv_filename), index=False)

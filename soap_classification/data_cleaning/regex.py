@@ -3,7 +3,7 @@ import re
 import os
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SOAPS_PATH = os.path.join(BASE_PATH, "resources/soaps")
+SOAPS_PATH = os.path.join(BASE_PATH, "resources/soaps/by_clinic")
 
 if __name__ == "__main__":
     # Define the regex pattern

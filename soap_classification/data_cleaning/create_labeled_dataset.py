@@ -3,7 +3,7 @@ import os
 from sklearn.utils import shuffle
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SOAPS_PATH = os.path.join(BASE_PATH, "resources/soaps")
+SOAPS_PATH = os.path.join(BASE_PATH, "resources/soaps/soap_sections")
 
 sub_sections_df = pd.read_csv(os.path.join(SOAPS_PATH, "sub_sections.csv"))
 obj_sections_df = pd.read_csv(os.path.join(SOAPS_PATH, "obj_sections.csv"))

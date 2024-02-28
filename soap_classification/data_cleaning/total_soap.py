@@ -9,7 +9,7 @@ if __name__ == "__main__":
     combined_df = pd.DataFrame(columns=["Soap"])
 
     # Loop through each file in the directory
-    for filename in os.listdir(SOAPS_PATH):
+    for filename in os.listdir(os.path.join(SOAPS_PATH, "by_clinic")):
         if filename.endswith(".csv"):
             # Read the CSV file into a DataFrame
             df = pd.read_csv(os.path.join(SOAPS_PATH, filename))
@@ -17,4 +17,4 @@ if __name__ == "__main__":
             combined_df = pd.concat([combined_df, df], ignore_index=True)
 
     # Write the combined DataFrame to a single CSV file
-    combined_df.to_csv("./combined_soaps.csv", index=False)
+    combined_df.to_csv(os.path.join(SOAPS_PATH, "combined_soaps.csv"), index=False)
