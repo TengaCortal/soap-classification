@@ -6,5 +6,5 @@
 
 ## Table of Contents
 
-1. [Pre-processing SOAP Text and Hybrid Tokenization](soap_classification/preprocessing/README.md)
-2. [SOAP Dataset Processing](soap_classification/data_cleaning/README.md)
+1. [Pre-processing SOAP Text and Hybrid Tokenization](soap_classification/preprocessing/README-日本語.md)
+2. [SOAP Dataset Processing](soap_classification/data_cleaning/README-日本語.md)
