@@ -11,6 +11,8 @@ soaps = pd.read_csv(os.path.join(SOAPS_PATH, "classified_soaps.csv"))
 soap_notes = soaps.iloc[:, 0]
 soap_notes.name = "soap"
 
+soap_notes = "X:" + soap_notes.astype(str)
+
 # Define the pattern
 S_pattern = re.compile(
     r'。S\)| S。|。S）|。S |"S|S:|\(S\)|（S）|nS|S：|"S。|。S。|S\.|。Ｓ|Ｓ）|<S>|S\)'

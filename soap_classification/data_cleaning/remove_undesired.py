@@ -11,7 +11,7 @@ unified_soaps = pd.read_csv(
 )
 
 # Define the patterns
-pattern_to_remove = re.compile(r"\n\\?|\\n\\?")
+pattern_to_remove = re.compile(r"\n\\?|\"|\\n\\?")
 pattern_to_replace = re.compile(r"(SUB:|OBJ:|ASM:|PLN:)(。|：。|：|\)|\)。|）)")
 
 undesired_row_pattern = re.compile(
@@ -19,7 +19,7 @@ undesired_row_pattern = re.compile(
 )
 
 
-# Function to remove unnecessary characters and patterns
+# Function to remove unnecessary characters and patternss
 def clean_text(text):
     """Cleans the input text by removing unnecessary characters and specified patterns.
 

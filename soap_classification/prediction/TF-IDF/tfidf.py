@@ -3,11 +3,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import make_pipeline
 from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import classification_report, confusion_matrix
 import os
 import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
 import numpy as np
+from sklearn.utils.class_weight import compute_class_weight
+
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOAPS_PATH = os.path.join(BASE_PATH, "../resources/soaps")
@@ -20,12 +23,26 @@ X_train, X_test, y_train, y_test = train_test_split(
     data["SOAP"], data["label"], test_size=0.2, random_state=42
 )
 
+# Compute class weights
+
+class_weights = compute_class_weight(
+    class_weight="balanced", classes=np.unique(y_train), y=y_train
+)
 # TF-IDF representation
 vectorizer = TfidfVectorizer()
 
+custom_weights = {"A": 0.8, "O": 1.0, "P": 1.0, "S": 0.5, "X": 1.0}
+
 # Define the classifier
 classifier = make_pipeline(
-    vectorizer, LogisticRegression(solver="lbfgs", max_iter=1000)
+    vectorizer,
+    LogisticRegression(
+        solver="lbfgs",
+        max_iter=1000,
+        penalty="l2",
+        C=10.0,
+        class_weight=custom_weights,
+    ),
 )
 
 # Fit the classifier

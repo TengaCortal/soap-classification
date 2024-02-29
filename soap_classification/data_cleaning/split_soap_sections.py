@@ -20,7 +20,9 @@ def extract_section(soaps_df, section):
     section_column = []
     for soap in soaps_df["soap"]:
         start_index = soap.find(section) + len(section) + 1
-        if section == "SUB":
+        if section == "X":
+            end_index = soap.find("SUB")
+        elif section == "SUB":
             end_index = soap.find("OBJ")
         elif section == "OBJ":
             end_index = soap.find("ASM")
@@ -46,7 +48,7 @@ def create_section_csv(cleaned_classified_soaps_path, output_dir):
     # Read the cleaned and classified SOAP notes CSV file
     soaps_df = pd.read_csv(cleaned_classified_soaps_path)
     # Extract and save each section as a separate CSV file
-    sections = ["SUB", "OBJ", "ASM", "PLN"]
+    sections = ["X", "SUB", "OBJ", "ASM", "PLN"]
     for section in sections:
         section_df = extract_section(soaps_df, section)
         output_path = os.path.join(output_dir, f"{section.lower()}_sections.csv")
