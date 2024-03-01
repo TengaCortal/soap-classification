@@ -177,6 +177,41 @@ def prediction_pipeline():
                     repartitioned_labels_second_longest[j],
                 )  # Insert the repartitioned labels
 
+        if len(partitioned_soaps[i]) in [4, 5]:
+            # Find the index of the longest element in the partition
+            longest_element_index = max(
+                range(len(partitioned_soaps[i])),
+                key=lambda x: len(partitioned_soaps[i][x]),
+            )
+            longest_element = partitioned_soaps[i][longest_element_index]
+
+            # Repartition the longest element using space as a separator
+            repartitioned_parts_longest = sp.partition_soap_text(
+                longest_element, separator=" "
+            )
+
+            # Predict labels for the repartitioned parts
+            repartitioned_labels_longest = []
+            for part in repartitioned_parts_longest:
+                repartitioned_labels_longest.append(
+                    predict_labels(classifier, [part])[0]
+                )
+
+            # Update the partitioned SOAP note and the predicted labels
+            partitioned_soaps[i].pop(
+                longest_element_index
+            )  # Remove the longest element
+            predicted_labels.pop(
+                longest_element_index
+            )  # Remove the corresponding predicted label
+            for j, part in enumerate(repartitioned_parts_longest):
+                partitioned_soaps[i].insert(
+                    longest_element_index + j, part
+                )  # Insert the repartitioned parts
+                predicted_labels.insert(
+                    longest_element_index + j, repartitioned_labels_longest[j]
+                )  # Insert the repartitioned labels
+
         # Append predicted labels for current SOAP note to the list
         predicted_labels_all.append(predicted_labels)
 
