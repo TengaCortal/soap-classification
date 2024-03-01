@@ -109,7 +109,7 @@ if __name__ == "__main__":
     separator = "。"
     partitioned_soaps = sp.partition_all_soap_text(cleaned_soaps, separator)
 
-    partitioned_soaps = partitioned_soaps[2:3]
+    partitioned_soaps = partitioned_soaps[1:3]
 
     for i, soap_note_parts in enumerate(partitioned_soaps):
         print("SOAP Note:", i + 1)
@@ -124,25 +124,59 @@ if __name__ == "__main__":
             section in "".join(predicted_labels) for section in ["S", "O", "A", "P"]
         )
 
-        # If any section is missing, find the longest part and repartition it
+        # If any section is missing, find the longest and second longest parts and repartition them
         if not all_sections_present:
-            # Find the index of the longest element in the partition
+            # Find the index of the longest and second longest elements in the partition
             longest_element_index = max(
                 range(len(soap_note_parts)), key=lambda x: len(soap_note_parts[x])
             )
             longest_element = soap_note_parts[longest_element_index]
 
-            # Repartition the longest element using space as a separator
-            print("Longest Element Before Repartitioning:", longest_element)
-            repartitioned_parts = sp.partition_soap_text(longest_element, separator=" ")
-            print("Repartitioned Parts:", repartitioned_parts)
+            sorted_indices = sorted(
+                range(len(soap_note_parts)),
+                key=lambda x: len(soap_note_parts[x]),
+                reverse=True,
+            )
+            second_longest_element_index = sorted_indices[1]
+            second_longest_element = soap_note_parts[second_longest_element_index]
+
+            # Repartition the longest and second longest elements using space as a separator
+            repartitioned_parts_longest = sp.partition_soap_text(
+                longest_element, separator=" "
+            )
+            repartitioned_parts_second_longest = sp.partition_soap_text(
+                second_longest_element, separator=" "
+            )
 
             # Predict labels for the repartitioned parts
-            repartitioned_labels = []
-            for part in repartitioned_parts:
-                repartitioned_labels.append(predict_labels(classifier, [part])[0])
+            repartitioned_labels_longest = []
+            for part in repartitioned_parts_longest:
+                repartitioned_labels_longest.append(
+                    predict_labels(classifier, [part])[0]
+                )
 
-            print("Repartitioned Labels:", repartitioned_labels)
+            repartitioned_labels_second_longest = []
+            for part in repartitioned_parts_second_longest:
+                repartitioned_labels_second_longest.append(
+                    predict_labels(classifier, [part])[0]
+                )
+
+            # print("Longest Element Before Repartitioning:", longest_element)
+            # print("Repartitioned Parts Longest:", repartitioned_parts_longest)
+            # print("Repartitioned Labels Longest:", repartitioned_labels_longest)
+
+            # print(
+            #     "Second Longest Element Before Repartitioning:",
+            #     second_longest_element,
+            # )
+            # print(
+            #     "Repartitioned Parts Second Longest:",
+            #     repartitioned_parts_second_longest,
+            # )
+            # print(
+            #     "Repartitioned Labels Second Longest:",
+            #     repartitioned_labels_second_longest,
+            # )
 
             # Update the partitioned SOAP note and the predicted labels
             partitioned_soaps[i].pop(
@@ -151,12 +185,27 @@ if __name__ == "__main__":
             predicted_labels.pop(
                 longest_element_index
             )  # Remove the corresponding predicted label
-            for j, part in enumerate(repartitioned_parts):
+            for j, part in enumerate(repartitioned_parts_longest):
                 partitioned_soaps[i].insert(
                     longest_element_index + j, part
                 )  # Insert the repartitioned parts
                 predicted_labels.insert(
-                    longest_element_index + j, repartitioned_labels[j]
+                    longest_element_index + j, repartitioned_labels_longest[j]
+                )  # Insert the repartitioned labels
+
+            partitioned_soaps[i].pop(
+                second_longest_element_index
+            )  # Remove the second longest element
+            predicted_labels.pop(
+                second_longest_element_index
+            )  # Remove the corresponding predicted label
+            for j, part in enumerate(repartitioned_parts_second_longest):
+                partitioned_soaps[i].insert(
+                    second_longest_element_index + j, part
+                )  # Insert the repartitioned parts
+                predicted_labels.insert(
+                    second_longest_element_index + j,
+                    repartitioned_labels_second_longest[j],
                 )  # Insert the repartitioned labels
 
         # Print the partitioned SOAP note and the predicted labels
