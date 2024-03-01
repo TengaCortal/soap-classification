@@ -11,7 +11,7 @@ unified_soaps = pd.read_csv(
 )
 
 # Define the patterns
-pattern_to_remove = re.compile(r"\n\\?|\"|\\n\\?")
+pattern_to_remove = re.compile(r"\n\\?|\"|\\n\\?|<font.*?>|\\>|</font>")
 pattern_to_replace = re.compile(r"(SUB:|OBJ:|ASM:|PLN:)(。|：。|：|\)|\)。|）)")
 
 undesired_row_pattern = re.compile(
