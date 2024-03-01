@@ -8,5 +8,7 @@ mecab-python3
 absl-py
 matplotlib
 scikit-learn
+joblib
+
 
 
