@@ -4,7 +4,7 @@ This folder contains a collection of prediction models designed to automate the 
 
 ## 1. TF-IDF
 
-TF-IDF (Term Frequency-Inverse Document Frequency) is a numerical statistic used in information retrieval and text mining to evaluate the importance of a word in a document relative to a collection of documents (corpus). 
+TF-IDF (Term Frequency-Inverse Document Frequency) is a numerical statistic used in information retrieval and text mining to evaluate the importance of a word in a document relative to a collection of documents (corpus).
 
 It consists of two main components: TF & IDF
 
@@ -34,7 +34,7 @@ TF-IDF highlights terms that are frequent in a document but rare in the corpus, 
 
 Let's break down the process step by step:
 
-1. **Input**: The input to the TF-IDF classifier is a list of partitioned SOAP notes. Each SOAP note is initially divided into sections using "。" as a separator. 
+1. **Input**: The input to the TF-IDF classifier is a list of partitioned SOAP notes. Each SOAP note is initially divided into sections using "。" as a separator.
 
 2. **Prediction**: The classifier predicts the section label for each partition in each SOAP note. For example, if a SOAP note has three partitions, the classifier predicts the labels for each of these partitions.
 

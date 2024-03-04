@@ -23,7 +23,7 @@ Sphinx（スフィンクス）は、Pythonプロジェクトのドキュメン�
         CLIUS-AI 
         ├── doc   
         └── soap_classification
-            ├── data_cleaning
+            ├── data_construction
             └── preprocessing
 
     ```bash
@@ -94,7 +94,7 @@ Sphinx（スフィンクス）は、Pythonプロジェクトのドキュメン�
         │   ├── Makefile
         │
         └── soap_classification
-            ├── data_cleaning
+            ├── data_construction
             └── preprocessing
 
     ```
