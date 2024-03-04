@@ -1,6 +1,6 @@
 # Machine Learning based SOAP Classification System
 
-日本語の[README](soap_classification/README-日本語.md)あります！
+日本語の[README](README-日本語.md)あります！
 
 This project involves the development of a Machine Learning based SOAP (Subjective, Objective, Assessment, Plan) classification system. 
 
