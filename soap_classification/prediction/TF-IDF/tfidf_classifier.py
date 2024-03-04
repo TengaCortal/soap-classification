@@ -1,6 +1,7 @@
 import joblib
 import os
 import sys
+import csv
 
 sys.path.append("..")
 import soap_partitioner as sp
@@ -73,17 +74,36 @@ def prediction_pipeline():
     cleaned_soaps = sp.remove_annotations(csv_file)
     separator = "。"
     partitioned_soaps = sp.partition_all_soap_text(cleaned_soaps, separator)
+    partitioned_soaps = partitioned_soaps[1:]
 
-    partitioned_soaps = partitioned_soaps[1:5]
+    # partitioned_soaps = partitioned_soaps[1:5]
 
     predicted_labels_all = []
 
     for i, soap_note_parts in enumerate(partitioned_soaps):
-
+        print("Processing SOAP Note:", i)  # Add this line
         # Predict labels for all parts
         predicted_labels = []
         for soap_part in soap_note_parts:
             predicted_labels.append(predict_labels(classifier, [soap_part])[0])
+
+        predicted_label_first_part = predict_label(classifier, soap_note_parts[0])
+
+        # If the predicted label for the first part is neither "X" nor "S", choose the one with higher probability
+        if len(partitioned_soaps[i]) > 2 and predicted_label_first_part not in [
+            "X",
+            "S",
+        ]:
+            x_probability = classifier.predict_proba([soap_note_parts[0]])[0][
+                classifier.classes_.tolist().index("X")
+            ]
+            s_probability = classifier.predict_proba([soap_note_parts[0]])[0][
+                classifier.classes_.tolist().index("S")
+            ]
+            if x_probability > s_probability:
+                predicted_labels[0] = "X"
+            else:
+                predicted_labels[0] = "S"
 
         # Check if all sections (S, O, A, P) are present in the predicted labels
         all_sections_present = all(
@@ -91,7 +111,7 @@ def prediction_pipeline():
         )
 
         # If any section is missing, find the longest and second longest parts and repartition them
-        if not all_sections_present:
+        if len(partitioned_soaps[i]) > 1 and not all_sections_present:
             # Find the index of the longest element in the partition
             longest_element_index = max(
                 range(len(soap_note_parts)), key=lambda x: len(soap_note_parts[x])
@@ -133,7 +153,7 @@ def prediction_pipeline():
                 )  # Insert the repartitioned labels
 
         # If any section is still missing, find the second longest element and repartition it
-        if not all_sections_present:
+        if len(partitioned_soaps[i]) > 1 and not all_sections_present:
             second_longest_element_index = sorted_indices[1]
             second_longest_element = soap_note_parts[second_longest_element_index]
 
@@ -148,18 +168,6 @@ def prediction_pipeline():
                 repartitioned_labels_second_longest.append(
                     predict_labels(classifier, [part])[0]
                 )
-
-            print(
-                "Second Longest Element Before Repartitioning:", second_longest_element
-            )
-            print(
-                "Repartitioned Parts Second Longest:",
-                repartitioned_parts_second_longest,
-            )
-            print(
-                "Repartitioned Labels Second Longest:",
-                repartitioned_labels_second_longest,
-            )
 
             # Update the partitioned SOAP note and the predicted labels
             partitioned_soaps[i].pop(
@@ -177,7 +185,7 @@ def prediction_pipeline():
                     repartitioned_labels_second_longest[j],
                 )  # Insert the repartitioned labels
 
-        if len(partitioned_soaps[i]) in [4, 5]:
+        if len(partitioned_soaps[i]) in [3, 4, 5]:
             # Find the index of the longest element in the partition
             longest_element_index = max(
                 range(len(partitioned_soaps[i])),
@@ -215,19 +223,51 @@ def prediction_pipeline():
         # Append predicted labels for current SOAP note to the list
         predicted_labels_all.append(predicted_labels)
 
+        if (
+            len(predicted_labels) >= 5
+            and all_sections_present
+            and predicted_labels[-2][-1] == "P"
+        ):
+            predicted_labels[-1] = "".join("P")
+
     return partitioned_soaps, predicted_labels_all
 
 
+def generate_csv_with_section_labels(
+    partitioned_soaps, predicted_labels_all, output_file
+):
+    with open(output_file, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.writer(csvfile)
+        for i, soap_note_parts in enumerate(partitioned_soaps):
+            labeled_soap_note = ""
+            prev_label = None
+            for j, soap_part in enumerate(soap_note_parts):
+                current_label = predicted_labels_all[i][j]
+                if current_label == prev_label:
+                    labeled_soap_note += soap_part.strip() + " "
+                else:
+                    labeled_soap_note += f"{current_label}: {soap_part.strip()} "
+                prev_label = current_label
+            if labeled_soap_note:
+                writer.writerow([labeled_soap_note.strip()])
+
+
 if __name__ == "__main__":
-    processed_data = prediction_pipeline()
-    partitioned_soaps, predicted_labels_all = processed_data
-    print(partitioned_soaps)
-    print()
-    print(predicted_labels_all)
-    # Print partitioned SOAP note and the associated predicted labels
-    for i, soap_note_parts in enumerate(partitioned_soaps):
-        print("SOAP Note:", i + 1)
-        for j, soap_part in enumerate(soap_note_parts):
-            print("Part", j + 1, ":", soap_part)
-            print("Predicted Label:", predicted_labels_all[i][j])
-        print()
+    partitioned_soaps, predicted_labels_all = prediction_pipeline()
+    # print(partitioned_soaps)
+    # print()
+    # print(predicted_labels_all)
+    # # Print partitioned SOAP note and the associated predicted labels
+    # for i, soap_note_parts in enumerate(partitioned_soaps):
+    #     print("SOAP Note:", i + 1)
+    #     for j, soap_part in enumerate(soap_note_parts):
+    #         print("Part", j + 1, ":", soap_part)
+    #         print("Predicted Label:", predicted_labels_all[i][j])
+    #     print()
+
+    # generate the CSV file
+    generate_csv_with_section_labels(
+        partitioned_soaps,
+        predicted_labels_all,
+        os.path.join(SOAPS_PATH, "tfidf_sectionized_soaps.csv"),
+    )

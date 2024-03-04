@@ -15,7 +15,7 @@ pattern_to_remove = re.compile(r"\n\\?|\"|\\n\\?|<font.*?>|\\>|</font>")
 pattern_to_replace = re.compile(r"(SUB:|OBJ:|ASM:|PLN:)(。|：。|：|\)|\)。|）)")
 
 undesired_row_pattern = re.compile(
-    r"ＨｂASM|SUB:.*SUB:|OBJ:.*OBJ:|ASM:.*ASM:|PLN:.*PLN:"
+    r"ＨｂASM|SUB:.*SUB:|OBJ:.*OBJ:|ASM:.*ASM:|PLN:.*PLN:|SUB: OBJ: ASM: PLN:|soap"
 )
 
 
@@ -55,7 +55,10 @@ def remove_rows_with_pattern(dataframe, pattern):
 cleaned_soaps = unified_soaps.iloc[:, 0].apply(clean_text)
 
 cleaned_soaps = remove_rows_with_pattern(cleaned_soaps, undesired_row_pattern)
-cleaned_soaps = pd.concat([pd.DataFrame(["soap"]).T, cleaned_soaps], ignore_index=True)
+cleaned_soaps = pd.concat(
+    [pd.DataFrame(["Cleaned Classified SOAP Notes"]).T, cleaned_soaps],
+    ignore_index=True,
+)
 
 # Save the cleaned DataFrame to a new CSV file
 cleaned_soaps.to_csv(
