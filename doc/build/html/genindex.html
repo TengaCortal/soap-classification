@@ -99,7 +99,7 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soap_classification.data_cleaning.html#soap_classification.data_cleaning.remove_undesired.clean_text">clean_text() (in module soap_classification.data_cleaning.remove_undesired)</a>
+      <li><a href="soap_classification.data_construction.html#soap_classification.data_construction.remove_undesired.clean_text">clean_text() (in module soap_classification.data_construction.remove_undesired)</a>
 </li>
       <li><a href="soap_classification.preprocessing.html#soap_classification.preprocessing.tokenization_mod.convert_by_vocab">convert_by_vocab() (in module soap_classification.preprocessing.tokenization_mod)</a>
 </li>
@@ -123,13 +123,19 @@
         <li><a href="soap_classification.preprocessing.html#soap_classification.preprocessing.tokenization_mod.FullTokenizerForMecab.convert_tokens_to_ids">(soap_classification.preprocessing.tokenization_mod.FullTokenizerForMecab method)</a>
 </li>
       </ul></li>
+      <li><a href="soap_classification.data_construction.html#soap_classification.data_construction.split_soap_sections.create_section_csv">create_section_csv() (in module soap_classification.data_construction.split_soap_sections)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soap_classification.data_cleaning.html#soap_classification.data_cleaning.extract_english_vocab.extract_english_words">extract_english_words() (in module soap_classification.data_cleaning.extract_english_vocab)</a>
+      <li><a href="soap_classification.data_construction.html#soap_classification.data_construction.extract_english_vocab.extract_english_words">extract_english_words() (in module soap_classification.data_construction.extract_english_vocab)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soap_classification.data_construction.html#soap_classification.data_construction.split_soap_sections.extract_section">extract_section() (in module soap_classification.data_construction.split_soap_sections)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -165,21 +171,29 @@
       <ul>
         <li><a href="soap_classification.html#module-soap_classification">soap_classification</a>
 </li>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning">soap_classification.data_cleaning</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction">soap_classification.data_construction</a>
 </li>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.extract_english_vocab">soap_classification.data_cleaning.extract_english_vocab</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.create_labeled_dataset">soap_classification.data_construction.create_labeled_dataset</a>
 </li>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.only_soap">soap_classification.data_cleaning.only_soap</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.extract_english_vocab">soap_classification.data_construction.extract_english_vocab</a>
 </li>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.regex">soap_classification.data_cleaning.regex</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.only_soap">soap_classification.data_construction.only_soap</a>
 </li>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.remove_undesired">soap_classification.data_cleaning.remove_undesired</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.regex">soap_classification.data_construction.regex</a>
 </li>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.retrieve_classified_soaps">soap_classification.data_cleaning.retrieve_classified_soaps</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.remove_undesired">soap_classification.data_construction.remove_undesired</a>
 </li>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.total_soap">soap_classification.data_cleaning.total_soap</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.retrieve_classified_soaps">soap_classification.data_construction.retrieve_classified_soaps</a>
 </li>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.unify_syntax">soap_classification.data_cleaning.unify_syntax</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.split_soap_sections">soap_classification.data_construction.split_soap_sections</a>
+</li>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.total_soap">soap_classification.data_construction.total_soap</a>
+</li>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.unify_syntax">soap_classification.data_construction.unify_syntax</a>
+</li>
+        <li><a href="soap_classification.prediction.html#module-soap_classification.prediction">soap_classification.prediction</a>
+</li>
+        <li><a href="soap_classification.prediction.html#module-soap_classification.prediction.soap_partitioner">soap_classification.prediction.soap_partitioner</a>
 </li>
         <li><a href="soap_classification.preprocessing.html#module-soap_classification.preprocessing">soap_classification.preprocessing</a>
 </li>
@@ -194,10 +208,14 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soap_classification.preprocessing.html#soap_classification.preprocessing.preprocess_text.preprocess">preprocess() (in module soap_classification.preprocessing.preprocess_text)</a>
+      <li><a href="soap_classification.prediction.html#soap_classification.prediction.soap_partitioner.partition_all_soap_text">partition_all_soap_text() (in module soap_classification.prediction.soap_partitioner)</a>
+</li>
+      <li><a href="soap_classification.prediction.html#soap_classification.prediction.soap_partitioner.partition_soap_text">partition_soap_text() (in module soap_classification.prediction.soap_partitioner)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="soap_classification.preprocessing.html#soap_classification.preprocessing.preprocess_text.preprocess">preprocess() (in module soap_classification.preprocessing.preprocess_text)</a>
+</li>
       <li><a href="soap_classification.preprocessing.html#soap_classification.preprocessing.tokenization_mod.printable_text">printable_text() (in module soap_classification.preprocessing.tokenization_mod)</a>
 </li>
   </ul></td>
@@ -206,11 +224,13 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soap_classification.data_cleaning.html#soap_classification.data_cleaning.remove_undesired.remove_rows_with_pattern">remove_rows_with_pattern() (in module soap_classification.data_cleaning.remove_undesired)</a>
+      <li><a href="soap_classification.prediction.html#soap_classification.prediction.soap_partitioner.remove_annotations">remove_annotations() (in module soap_classification.prediction.soap_partitioner)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="soap_classification.data_cleaning.html#soap_classification.data_cleaning.unify_syntax.replace_sub">replace_sub() (in module soap_classification.data_cleaning.unify_syntax)</a>
+      <li><a href="soap_classification.data_construction.html#soap_classification.data_construction.remove_undesired.remove_rows_with_pattern">remove_rows_with_pattern() (in module soap_classification.data_construction.remove_undesired)</a>
+</li>
+      <li><a href="soap_classification.data_construction.html#soap_classification.data_construction.unify_syntax.replace_sub">replace_sub() (in module soap_classification.data_construction.unify_syntax)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -226,61 +246,89 @@
 </li>
       </ul></li>
       <li>
-    soap_classification.data_cleaning
+    soap_classification.data_construction
 
       <ul>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning">module</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction">module</a>
 </li>
       </ul></li>
       <li>
-    soap_classification.data_cleaning.extract_english_vocab
+    soap_classification.data_construction.create_labeled_dataset
 
       <ul>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.extract_english_vocab">module</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.create_labeled_dataset">module</a>
 </li>
       </ul></li>
       <li>
-    soap_classification.data_cleaning.only_soap
+    soap_classification.data_construction.extract_english_vocab
 
       <ul>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.only_soap">module</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.extract_english_vocab">module</a>
 </li>
       </ul></li>
       <li>
-    soap_classification.data_cleaning.regex
+    soap_classification.data_construction.only_soap
 
       <ul>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.regex">module</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.only_soap">module</a>
 </li>
       </ul></li>
       <li>
-    soap_classification.data_cleaning.remove_undesired
+    soap_classification.data_construction.regex
 
       <ul>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.remove_undesired">module</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.regex">module</a>
+</li>
+      </ul></li>
+      <li>
+    soap_classification.data_construction.remove_undesired
+
+      <ul>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.remove_undesired">module</a>
+</li>
+      </ul></li>
+      <li>
+    soap_classification.data_construction.retrieve_classified_soaps
+
+      <ul>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.retrieve_classified_soaps">module</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
-    soap_classification.data_cleaning.retrieve_classified_soaps
+    soap_classification.data_construction.split_soap_sections
 
       <ul>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.retrieve_classified_soaps">module</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.split_soap_sections">module</a>
 </li>
       </ul></li>
       <li>
-    soap_classification.data_cleaning.total_soap
+    soap_classification.data_construction.total_soap
 
       <ul>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.total_soap">module</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.total_soap">module</a>
 </li>
       </ul></li>
       <li>
-    soap_classification.data_cleaning.unify_syntax
+    soap_classification.data_construction.unify_syntax
 
       <ul>
-        <li><a href="soap_classification.data_cleaning.html#module-soap_classification.data_cleaning.unify_syntax">module</a>
+        <li><a href="soap_classification.data_construction.html#module-soap_classification.data_construction.unify_syntax">module</a>
+</li>
+      </ul></li>
+      <li>
+    soap_classification.prediction
+
+      <ul>
+        <li><a href="soap_classification.prediction.html#module-soap_classification.prediction">module</a>
+</li>
+      </ul></li>
+      <li>
+    soap_classification.prediction.soap_partitioner
+
+      <ul>
+        <li><a href="soap_classification.prediction.html#module-soap_classification.prediction.soap_partitioner">module</a>
 </li>
       </ul></li>
       <li>

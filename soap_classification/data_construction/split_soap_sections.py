@@ -69,7 +69,10 @@ def create_section_csv(cleaned_classified_soaps_path, output_dir):
                     file.write(line)
 
 
-cleaned_classified_soaps_path = os.path.join(SOAPS_PATH, "cleaned_classified_soaps.csv")
-output_dir = os.path.join(SOAPS_PATH, "soap_sections")
+if __name__ == "__main__":
+    cleaned_classified_soaps_path = os.path.join(
+        SOAPS_PATH, "cleaned_classified_soaps.csv"
+    )
+    output_dir = os.path.join(SOAPS_PATH, "soap_sections")
 
-create_section_csv(cleaned_classified_soaps_path, output_dir)
+    create_section_csv(cleaned_classified_soaps_path, output_dir)
