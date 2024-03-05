@@ -49,7 +49,7 @@ if __name__ == "__main__":
     pattern_to_replace = re.compile(r"(SUB:|OBJ:|ASM:|PLN:)(。|：。|：|\)|\)。|）)")
 
     undesired_row_pattern = re.compile(
-        r"ＨｂASM|SUB:.*SUB:|OBJ:.*OBJ:|ASM:.*ASM:|PLN:.*PLN:|SUB: OBJ: ASM: PLN:|soap"
+        r"ＨｂASM|SUB:.*SUB:|OBJ:.*OBJ:|ASM:.*ASM:|PLN:.*PLN:|SUB: OBJ: ASM: PLN:|soap|^(?!.*ASM:).*|^(?!.*OBJ:).*"
     )
 
     # Apply the cleaning function to the 'soap' column
