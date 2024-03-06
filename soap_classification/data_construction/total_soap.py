@@ -12,7 +12,9 @@ if __name__ == "__main__":
     for filename in os.listdir(os.path.join(SOAPS_PATH, "by_clinic")):
         if filename.endswith(".csv"):
             # Read the CSV file into a DataFrame
-            df = pd.read_csv(os.path.join(SOAPS_PATH, filename))
+            df = pd.read_csv(
+                os.path.join(os.path.join(SOAPS_PATH, "by_clinic"), filename)
+            )
             # Append the DataFrame to the combined DataFrame
             combined_df = pd.concat([combined_df, df], ignore_index=True)
 
