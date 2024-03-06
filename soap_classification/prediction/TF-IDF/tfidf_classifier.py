@@ -81,7 +81,9 @@ def prediction_pipeline():
     predicted_labels_all = []
 
     for i, soap_note_parts in enumerate(partitioned_soaps):
-        print("Processing SOAP Note:", i)  # Add this line
+        if i % 1000 == 0:
+            print("Processing SOAP Note:", i)
+
         # Predict labels for all parts
         predicted_labels = []
         for soap_part in soap_note_parts:

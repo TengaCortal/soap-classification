@@ -21,6 +21,7 @@ def clean_text(text):
     # Remove specified patterns following SUB:, OBJ:, ASM:, or PLN:
     cleaned_text = re.sub(pattern_to_replace, r"\1", cleaned_text)
     cleaned_text = re.sub(pattern_to_replace, r"\1", cleaned_text)
+    cleaned_text = re.sub(pattern_X, "SUB:", cleaned_text)
     return cleaned_text
 
 
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     # Define the patterns
     pattern_to_remove = re.compile(r"\n\\?|\"|\\n\\?|<font.*?>|\\>|</font>| n ")
     pattern_to_replace = re.compile(r"(SUB:|OBJ:|ASM:|PLN:)(。|：。|：|\)|\)。|）)")
-
+    pattern_X = re.compile(r"X: SUB:")
     undesired_row_pattern = re.compile(
         r"ＨｂASM|SUB:.*SUB:|OBJ:.*OBJ:|ASM:.*ASM:|PLN:.*PLN:|SUB: OBJ: ASM: PLN:|soap|^(?!.*ASM:).*|^(?!.*OBJ:).*"
     )

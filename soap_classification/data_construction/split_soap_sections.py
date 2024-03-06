@@ -17,7 +17,7 @@ def extract_section(soaps_df, section):
     - DataFrame: DataFrame containing only the specified section.
     """
     section_column = []
-    for soap in soaps_df["soap"]:
+    for soap in soaps_df["Cleaned Classified SOAP Notes"]:
         start_index = soap.find(section) + len(section) + 1
         if section == "X":
             end_index = soap.find("SUB")

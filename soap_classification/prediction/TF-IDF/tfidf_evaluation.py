@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import make_pipeline
 from sklearn.linear_model import LogisticRegression
@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
 import numpy as np
 from sklearn.utils.class_weight import compute_class_weight
+from sklearn.ensemble import GradientBoostingClassifier
+from tqdm import tqdm
 
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,7 +22,7 @@ data = pd.read_csv(os.path.join(SOAPS_PATH, "labeled_dataset.csv"))
 
 # Split the data into train and test sets
 X_train, X_test, y_train, y_test = train_test_split(
-    data["SOAP"], data["label"], test_size=0.2, random_state=42
+    data["SOAP"], data["label"], test_size=0.15, random_state=42
 )
 
 # Compute class weights
@@ -44,6 +46,14 @@ classifier = make_pipeline(
         class_weight=custom_weights,
     ),
 )
+
+# Perform cross-validation
+cv_scores = cross_val_score(classifier, X_train, y_train, cv=5)
+
+print("Cross Validation Scores:")
+print(cv_scores)
+print("Mean CV Accuracy: {:.2f}".format(np.mean(cv_scores)))
+
 
 # Fit the classifier
 classifier.fit(X_train, y_train)
