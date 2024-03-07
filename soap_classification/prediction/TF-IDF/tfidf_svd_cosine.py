@@ -33,9 +33,9 @@ def classify_with_cosine_similarity(
 
 if __name__ == "__main__":
     # Load the dataset
-    data = pd.read_csv(os.path.join(SOAPS_PATH, "labeled_dataset.csv"))
+    data = pd.read_csv(os.path.join(SOAPS_PATH, "内科_labeled_dataset.csv"))
 
-    svd = TruncatedSVD(n_components=100)
+    svd = TruncatedSVD(n_components=100, random_state=42)
 
     # Split the data into train and test sets
     X_train, X_test, y_train, y_test = train_test_split(

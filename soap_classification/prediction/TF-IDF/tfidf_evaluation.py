@@ -3,15 +3,13 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import make_pipeline
 from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import classification_report, confusion_matrix
 import os
 import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
 import numpy as np
 from sklearn.utils.class_weight import compute_class_weight
-from sklearn.ensemble import GradientBoostingClassifier
-from tqdm import tqdm
+from sklearn.decomposition import LatentDirichletAllocation
 
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -30,11 +28,15 @@ X_train, X_test, y_train, y_test = train_test_split(
 class_weights = compute_class_weight(
     class_weight="balanced", classes=np.unique(y_train), y=y_train
 )
+class_weights_dict = {
+    class_label: weight
+    for class_label, weight in zip(np.unique(y_train), class_weights)
+}
 # TF-IDF representation
 vectorizer = TfidfVectorizer()
 
-custom_weights = {"A": 0.8, "O": 1.0, "P": 1.0, "S": 0.5, "X": 1.0}
-
+# LDA representation
+lda_vectorizer = LatentDirichletAllocation(n_components=10, random_state=42)
 # Define the classifier
 classifier = make_pipeline(
     vectorizer,
@@ -43,16 +45,16 @@ classifier = make_pipeline(
         max_iter=1000,
         penalty="l2",
         C=10.0,
-        class_weight=custom_weights,
+        class_weight=class_weights_dict,
     ),
 )
 
-# Perform cross-validation
-cv_scores = cross_val_score(classifier, X_train, y_train, cv=5)
+# # Perform cross-validation
+# cv_scores = cross_val_score(classifier, X_train, y_train, cv=5)
 
-print("Cross Validation Scores:")
-print(cv_scores)
-print("Mean CV Accuracy: {:.2f}".format(np.mean(cv_scores)))
+# print("Cross Validation Scores:")
+# print(cv_scores)
+# print("Mean CV Accuracy: {:.2f}".format(np.mean(cv_scores)))
 
 
 # Fit the classifier

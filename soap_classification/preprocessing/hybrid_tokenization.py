@@ -33,7 +33,7 @@ def detect_language(text):
         return "en"
 
 
-if __name__ == "__main__":
+def hybrid_tokenize(text):
 
     # special token for a Person's name
     name_token = "＠＠Ｎ"
@@ -67,13 +67,7 @@ if __name__ == "__main__":
         vocab_file=vocab_file_eng, do_lower_case=False
     )
 
-    # pre process and tokenize example
-    original_text = "昨日より、左股関節を痛がる。歩行できない。　朝は歩けたが、夕方より歩行できなくなった。　現在も継続している。　先行する感染兆候　なし。4日前に、自転車の練習をしていてたくさん運動した。O) 圧痛　左股関節に。　Patrick ＋　Anterior impingement sign -。　Xp：明白な所見は認めず。A/P) 単純性股関節炎。　病態を説明。１週間経過を見てください。　歩行をしてしまったらそれでよいです"
-
-    print("Original text:", original_text)
-    print()
-
-    pre_processed_text = my_preprocess(original_text)
+    pre_processed_text = my_preprocess(text)
 
     separators = r"[。、：: 、,)/）／ ]"
     splitted_text = re.split(separators, pre_processed_text)
@@ -106,5 +100,18 @@ if __name__ == "__main__":
         tokens.extend(output_tokens)
         # print("Language:", segment['language'])
         # print("Tokenized text:", ' '.join(output_tokens))
+
+    return tokens
+
+
+if __name__ == "__main__":
+
+    # pre process and tokenize example
+    original_text = "昨日より、左股関節を痛がる。歩行できない。　朝は歩けたが、夕方より歩行できなくなった。　現在も継続している。　先行する感染兆候　なし。4日前に、自転車の練習をしていてたくさん運動した。O) 圧痛　左股関節に。　Patrick ＋　Anterior impingement sign -。　Xp：明白な所見は認めず。A/P) 単純性股関節炎。　病態を説明。１週間経過を見てください。　歩行をしてしまったらそれでよいです"
+
+    print("Original text:", original_text)
+    print()
+
+    tokens = hybrid_tokenize(original_text)
 
     print("Tokenized text:", tokens)
