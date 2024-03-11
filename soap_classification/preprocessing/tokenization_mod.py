@@ -425,7 +425,7 @@ class MecabTokenizer(BasicTokenizer):
         self.anonymize_person_name = anonymize_person_name  # This flag should be False unless your text contains a lot of names.
         self.name_token = name_token
         self._mecab = MeCab.Tagger(
-            "-d " + mecab_ipadic_neologd + " -u " + mecab_J_medic
+            " -d " + mecab_ipadic_neologd + " -u " + mecab_J_medic
         )
 
     def tokenize(self, text):
