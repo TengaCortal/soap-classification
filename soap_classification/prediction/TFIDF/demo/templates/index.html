@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <title>SOAP分類</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .categories {
+            margin-top: 20px;
+        }
+
+        .category {
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+    </style>
+
+
+</head>
+<body>
+    <div class="container">
+        <h2>SOAP分類</h2>
+        <form id="soap-form">
+            <label for="soap">SOAP入力:</label>
+            <input type="text" id="soap" name="soap" placeholder="SOAPを入力してください...">
+            <button type="submit">分類</button>
+        </form>
+        <div id="categories" class="categories"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('soap-form');
+            const categoriesDiv = document.getElementById('categories');
+    
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // フォームのデフォルトの動作を停止
+    
+                const formData = new FormData(form);
+                const soapData = formData.get('soap');
+    
+                fetch('/classify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ soap: soapData })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 分類結果を表示
+                    categoriesDiv.innerHTML = '<div class="category">' + data.soap + '</div>';
+                    categoriesDiv.innerHTML = '<div class="category">' + data.result + '</div>';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+    
+</body>
+</html>
