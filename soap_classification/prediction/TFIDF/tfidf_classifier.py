@@ -52,8 +52,9 @@ def predict_labels(classifier, partitioned_soap_notes):
         predicted_labels.append(predict_label(classifier, partitioned_soap))
     return predicted_labels
 
+
 def get_classifier():
-      # Train the classifier
+    # Train the classifier
     dataset_file = os.path.join(SOAPS_PATH, "labeled_dataset.csv")
     classifier_file = os.path.join(BASE_PATH, "../resources/trained_classifier.joblib")
 
@@ -70,11 +71,12 @@ def get_classifier():
         )  # Load a trained classifier from a file
     return classifier
 
+
 def predict_final_label(classifier, partitioned_soap):
 
     # Predict labels for all parts
     predicted_labels = predict_labels(classifier, partitioned_soap)
-    
+
     predicted_label_first_part = predict_label(classifier, partitioned_soap[0])
 
     # If the predicted label for the first part is neither "X" nor "S", choose the one with higher probability
@@ -92,8 +94,6 @@ def predict_final_label(classifier, partitioned_soap):
             predicted_labels[0] = "X"
         else:
             predicted_labels[0] = "S"
-
-   
 
     # If there are 3 or more parts and any section is missing, find the longest part and repartition it
     if len(partitioned_soap) > 2 and not check_all_sections(predicted_labels):
@@ -116,14 +116,14 @@ def predict_final_label(classifier, partitioned_soap):
         )
 
         # Predict labels for the repartitioned parts
-        repartitioned_labels_longest = predict_labels(classifier, repartitioned_parts_longest)
+        repartitioned_labels_longest = predict_labels(
+            classifier, repartitioned_parts_longest
+        )
 
         print("partitioned_soap")
         print(partitioned_soap)
         # Update the partitioned SOAP note and the predicted labels
-        partitioned_soap.pop(
-            longest_element_index
-        )  # Remove the longest element
+        partitioned_soap.pop(longest_element_index)  # Remove the longest element
         predicted_labels.pop(
             longest_element_index
         )  # Remove the corresponding predicted label
@@ -135,8 +135,6 @@ def predict_final_label(classifier, partitioned_soap):
                 longest_element_index + j, repartitioned_labels_longest[j]
             )  # Insert the repartitioned labels
 
-       
-        
         # If any section is still missing, find the second longest element and repartition it
         if not check_all_sections(predicted_labels):
             second_longest_element_index = sorted_indices[1]
@@ -148,7 +146,9 @@ def predict_final_label(classifier, partitioned_soap):
             )
 
             # Predict labels for the repartitioned parts
-            repartitioned_labels_second_longest = predict_labels(classifier, repartitioned_parts_second_longest)
+            repartitioned_labels_second_longest = predict_labels(
+                classifier, repartitioned_parts_second_longest
+            )
 
             # Update the partitioned SOAP note and the predicted labels
             partitioned_soap.pop(
@@ -166,41 +166,42 @@ def predict_final_label(classifier, partitioned_soap):
                     repartitioned_labels_second_longest[j],
                 )  # Insert the repartitioned labels
 
-            
             if (
-            len(predicted_labels) >= 5
-            and check_all_sections(predicted_labels)
-            and predicted_labels[-3],predicted_labels[-2] == "P"
+                len(predicted_labels) >= 5
+                and check_all_sections(predicted_labels)
+                and predicted_labels[-3],
+                predicted_labels[-2] == "P",
             ):
                 predicted_labels[-1] = "".join("P")
-            
-    return partitioned_soap,predicted_labels
 
-        
+    return partitioned_soap, predicted_labels
+
+
 def check_all_sections(predicted_labels):
     all_sections_present = all(
         section in "".join(predicted_labels) for section in ["S", "O", "A", "P"]
     )
     return all_sections_present
 
+
 def prediction_pipeline():
 
-    classifier=get_classifier()
+    classifier = get_classifier()
     csv_file = os.path.join(SOAPS_PATH, "cleaned_classified_soaps.csv")
     cleaned_soaps = sp.remove_annotations(csv_file)
     separator = "。"
     partitioned_soaps = sp.partition_all_soap_text(cleaned_soaps, separator)
     partitioned_soaps = partitioned_soaps[10952:10953]
 
-
     predicted_labels_all = []
     partitioned_soap_all = []
     for i, partitioned_soap in enumerate(partitioned_soaps):
         if i % 1000 == 0:
             print("Processing SOAP Note:", i)
-        
-        final_partitioned_soap,final_predicted_labels=predict_final_label(classifier, partitioned_soap)
-    
+
+        final_partitioned_soap, final_predicted_labels = predict_final_label(
+            classifier, partitioned_soap
+        )
 
         # Append predicted labels for current SOAP note to the list
         predicted_labels_all.append(final_predicted_labels)
@@ -228,14 +229,16 @@ def generate_csv_with_section_labels(
                 writer.writerow([labeled_soap_note.strip()])
 
 
-def for_demo(
-        soap
-):
-    classifier=get_classifier()
-    partitioned_soap,predict_label=predict_final_label(classifier, soap)
-    return partitioned_soap,predict_label
+def for_demo(soap):
+    classifier = get_classifier()
+    partitioned_soap, predict_label = predict_final_label(classifier, soap)
+    return partitioned_soap, predict_label
+
 
 if __name__ == "__main__":
+    soap = "023\/07\/19　初診大分前から両目に黒い物が見える。5月か6月位に夜になると、右眼の奥にピカっと光る物が何度か見えた。今は治まっている。夜勤のお仕事。散瞳検査OK。歩いて来院。S)両目　眼の際　痒み+　目脂は出ない。眼を抑えるようにごしごしかいていたのでそれはやめるよう伝えた。２ｗ間隔位で来ていただいてるので今日は視力検査しませんでした。両AH+　アレジオンLX両2　処方以前緑内障と言われていたIOP　14\/12ｍｍHg　→15\/15mmHg　やや高めOCT NFLD+ R>L　眼鏡は左が過矯正　眼鏡改作 try眼鏡処方（2023\/08\/16）改作を勧めたタプロス両1　do（2023\/09\/06-）経過観察　1M"
+    separator = "。"
+    partitioned_soaps = sp.partition_soap_text(soap, separator)
     # partitioned_soaps, predicted_labels_all = prediction_pipeline()
     # print(partitioned_soaps)
     # print()
@@ -255,5 +258,4 @@ if __name__ == "__main__":
     #     os.path.join(SOAPS_PATH, "tfidf_sectionized_soaps.csv"),
     # )
 
-    print(for_demo("023\/07\/19　初診大分前から両目に黒い物が見える。5月か6月位に夜になると、右眼の奥にピカっと光る物が何度か見えた。今は治まっている。夜勤のお仕事。散瞳検査OK。歩いて来院。S)両目　眼の際　痒み+　目脂は出ない。眼を抑えるようにごしごしかいていたのでそれはやめるよう伝えた。２ｗ間隔位で来ていただいてるので今日は視力検査しませんでした。両AH+　アレジオンLX両2　処方以前緑内障と言われていたIOP　14\/12ｍｍHg　→15\/15mmHg　やや高めOCT NFLD+ R>L　眼鏡は左が過矯正　眼鏡改作 try眼鏡処方（2023\/08\/16）改作を勧めたタプロス両1　do（2023\/09\/06-）経過観察　1M"))
-    
+    for_demo(soap)
