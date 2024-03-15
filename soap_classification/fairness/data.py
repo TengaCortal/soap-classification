@@ -4,6 +4,7 @@ import ast
 import re
 import csv
 import sys
+from sklearn.utils import shuffle
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_PATH)
@@ -135,57 +136,57 @@ def create_section_csv(cleaned_classified_fairness_path, output_dir):
 
 
 if __name__ == "__main__":
-    # Iterate over each folder in DATA_PATH
-    for folder_name in os.listdir(DATA_PATH):
-        folder_path = os.path.join(DATA_PATH, folder_name)
-        if os.path.isdir(folder_path):
-            # Read the CSV file within each folder
-            csv_file_path = os.path.join(folder_path, "raw_data.csv")
-            df = pd.read_csv(csv_file_path)
+    # # Iterate over each folder in DATA_PATH
+    # for folder_name in os.listdir(DATA_PATH):
+    #     folder_path = os.path.join(DATA_PATH, folder_name)
+    #     if os.path.isdir(folder_path):
+    #         # Read the CSV file within each folder
+    #         csv_file_path = os.path.join(folder_path, "raw_data.csv")
+    #         df = pd.read_csv(csv_file_path)
 
-            # Sort the DataFrame by 'patient number' column
-            df.sort_values(by="patient_no", inplace=True)
+    #         # Sort the DataFrame by 'patient number' column
+    #         df.sort_values(by="patient_no", inplace=True)
 
-            # Drop duplicates keeping the first occurrence (which is the earliest based on sorting)
-            df.drop_duplicates(subset="patient_no", keep="first", inplace=True)
+    #         # Drop duplicates keeping the first occurrence (which is the earliest based on sorting)
+    #         df.drop_duplicates(subset="patient_no", keep="first", inplace=True)
 
-            # Reset index to make it sequential
-            df.reset_index(drop=True, inplace=True)
+    #         # Reset index to make it sequential
+    #         df.reset_index(drop=True, inplace=True)
 
-            columns_to_drop = [
-                "chart_id",
-                "patient_basic",
-                "interview",
-                "birth_date",
-                "insurances",
-                "recipe_category",
-                "recipe_medical_class",
-                "recipe_quantity",
-                "recipe_unit",
-                "direction_usage",
-                "recipe_items",
-                "order_name",
-                "order_code",
-                "accept_datetime",
-            ]
-            df.drop(columns=columns_to_drop, inplace=True)
+    #         columns_to_drop = [
+    #             "chart_id",
+    #             "patient_basic",
+    #             "interview",
+    #             "birth_date",
+    #             "insurances",
+    #             "recipe_category",
+    #             "recipe_medical_class",
+    #             "recipe_quantity",
+    #             "recipe_unit",
+    #             "direction_usage",
+    #             "recipe_items",
+    #             "order_name",
+    #             "order_code",
+    #             "accept_datetime",
+    #         ]
+    #         df.drop(columns=columns_to_drop, inplace=True)
 
-            # Remove double quotes from the "soap" column
-            df["soap"] = df["soap"].str.replace('"', "")
+    #         # Remove double quotes from the "soap" column
+    #         df["soap"] = df["soap"].str.replace('"', "")
 
-            # Apply the function to the "department" column
-            df["department"] = df["department"].apply(extract_name)
+    #         # Apply the function to the "department" column
+    #         df["department"] = df["department"].apply(extract_name)
 
-            df["physician"] = df["physician"].apply(extract_name)
+    #         df["physician"] = df["physician"].apply(extract_name)
 
-            # Apply the function to the "age" column
-            df["age"] = df["age"].apply(map_age_to_label)
+    #         # Apply the function to the "age" column
+    #         df["age"] = df["age"].apply(map_age_to_label)
 
-            # Generate the new filename based on the last 5 characters of the folder name
-            new_csv_filename = folder_name[-5:] + "_fairness.csv"
+    #         # Generate the new filename based on the last 5 characters of the folder name
+    #         new_csv_filename = folder_name[-5:] + "_fairness.csv"
 
-            # Save the new DataFrame to the specified CSV file
-            df.to_csv(os.path.join(SOAPS_PATH, new_csv_filename), index=False)
+    #         # Save the new DataFrame to the specified CSV file
+    #         df.to_csv(os.path.join(SOAPS_PATH, new_csv_filename), index=False)
 
     # Initialize an empty DataFrame to store the combined data
     combined_df = pd.DataFrame()
@@ -315,3 +316,41 @@ if __name__ == "__main__":
     output_dir = os.path.join(BASE_PATH, "fairness/soap_sections")
 
     create_section_csv(cleaned_classified_fairness_path, output_dir)
+
+    # Get a list of all CSV files in the folder
+    file_paths = [os.path.join(output_dir, file) for file in os.listdir(output_dir)]
+
+    # Read each CSV file into a pandas DataFrame and store them in a list
+    dfs = [pd.read_csv(file) for file in file_paths]
+
+    # Concatenate the DataFrames into one DataFrame
+    combined_df = pd.concat(dfs, ignore_index=True)
+
+    new_headers = [
+        "clinic_id",
+        "patient_no",
+        "department",
+        "physician",
+        "diseases",
+        "gender_type",
+        "age",
+        "soap",
+        "label",
+    ]
+    combined_df.columns = new_headers
+
+    for index, row in combined_df.iterrows():
+        # Check the length of the soap column value
+        if len(str(row["soap"])) <= 2:
+            # Drop the row if the length is not greater than 1
+            combined_df.drop(index, inplace=True)
+
+    combined_df = combined_df.dropna(subset=["soap"])
+
+    # Shuffle the rows of the combined DataFrame
+    combined_df_shuffled = shuffle(combined_df)
+
+    # Write the shuffled DataFrame to a new CSV file
+    combined_df_shuffled.to_csv(
+        os.path.join(BASE_PATH, "fairness/fairness_labeled_dataset.csv"), index=False
+    )

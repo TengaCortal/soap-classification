@@ -1,0 +1,11 @@
+              precision    recall  f1-score   support
+
+         ASM       0.80      0.46      0.59       970
+         OBJ       0.94      0.73      0.82      1176
+         PLN       0.89      0.61      0.73       943
+         SUB       0.48      0.91      0.63      1134
+           X       0.85      0.82      0.83       879
+
+    accuracy                           0.71      5102
+   macro avg       0.79      0.71      0.72      5102
+weighted avg       0.79      0.71      0.72      5102

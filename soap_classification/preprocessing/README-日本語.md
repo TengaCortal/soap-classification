@@ -34,7 +34,7 @@ Macの場合：https://qiita.com/paulxll/items/72a2bea9b1d1486ca751
 `sudo bin/install-mecab-ipadic-neologd -n -a`<br>
 
 ### 1-4. /etc/mecabrcを編集
-dicdir = /path/to/mecabrc
+dicdir = mecab-ipadic-neologdへのパス
 
 ## 2. テキストの前処理
 
