@@ -3,6 +3,14 @@ import platform
 
 
 def install_python():
+    """
+    Install Python 3.11 using package manager.
+
+    Note: This function assumes you are using macOS or a Debian-based Linux distribution.
+
+    Raises:
+        Exception: If an error occurs during installation.
+    """
     try:
         if platform.system() == "Darwin":
             subprocess.run(["brew", "install", "python@3.11"])
@@ -14,6 +22,12 @@ def install_python():
 
 
 def install_libraries():
+    """
+    Install required libraries using pip.
+
+    Raises:
+        Exception: If an error occurs during installation.
+    """
     try:
         subprocess.run(["python3.11", "-m", "pip", "install", "-r", "requirements.txt"])
     except Exception as e:

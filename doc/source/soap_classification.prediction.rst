@@ -7,7 +7,8 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   soap_classification.prediction.TF-IDF
+   soap_classification.prediction.TFIDF
+   soap_classification.prediction.Topic
 
 Submodules
 ----------

@@ -24,6 +24,15 @@ flags.FLAGS(sys.argv)
 
 
 def classify_soap_notes(notes):
+    """
+    Classify SOAP notes into categories (S, O, A, P) using a trained BERTopic model.
+
+    Args:
+        notes (list): A list of strings containing SOAP notes to be classified.
+
+    Returns:
+        None
+    """
     # Transform the new SOAP notes using the trained BERTopic model
     new_topics, _ = model.transform(notes)
 
@@ -42,6 +51,15 @@ def classify_soap_notes(notes):
 
 
 def tokenize_soaps(soap_file):
+    """
+    Tokenize SOAP notes from a CSV file and save the tokenized data.
+
+    Args:
+        soap_file (str): The path to the CSV file containing SOAP notes.
+
+    Returns:
+        None
+    """
     data = pd.read_csv(soap_file)
 
     # percentage = int(len(data) * 0.1)

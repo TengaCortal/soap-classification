@@ -16,6 +16,16 @@ BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def evaluate_fairness(data, subgroup_column):
+    """
+    Evaluate fairness of a classifier.
+
+    Args:
+        data (DataFrame): The dataset containing SOAP notes and labels.
+        subgroup_column (str): The column containing subgroup information.
+
+    Returns:
+        tuple: A tuple containing percentage of correct predictions and subgroup counts.
+    """
     # Split the data into train and test sets
     X_train, X_test, y_train, y_test = train_test_split(
         data["soap"], data["label"], test_size=0.15, random_state=42

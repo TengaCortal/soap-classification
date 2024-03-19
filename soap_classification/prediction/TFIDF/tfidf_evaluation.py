@@ -53,9 +53,6 @@ if __name__ == "__main__":
     # Predict on the test set
     y_pred = classifier.predict(X_test)
 
-    # Generate the classification report
-    class_rep = classification_report(y_test, y_pred, output_dict=True)
-
     # Save the classification report as PDF
     with open("tfidf_report.txt", "w") as f:
         f.write(classification_report(y_test, y_pred))

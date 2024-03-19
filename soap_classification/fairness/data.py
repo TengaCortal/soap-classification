@@ -14,12 +14,30 @@ SOAPS_PATH = os.path.join(BASE_PATH, "resources/soaps/by_clinic")
 
 # Function to extract name from the dictionary string
 def extract_name(d):
+    """
+    Extract the name from a dictionary string.
+
+    Args:
+        d (str): The dictionary string.
+
+    Returns:
+        str: The name extracted from the dictionary.
+    """
     d_dict = ast.literal_eval(d)  # Convert string to dictionary
     return d_dict["name"]
 
 
 # Function to map age ranges to labels
 def map_age_to_label(age):
+    """
+    Map age ranges to labels.
+
+    Args:
+        age (int): The age to be mapped.
+
+    Returns:
+        str: The label corresponding to the age range.
+    """
     if age >= 0 and age <= 17:
         return "youth"
     elif age >= 18 and age <= 64:
@@ -31,7 +49,6 @@ def map_age_to_label(age):
 # Function to replace patterns with "SUB:"
 def replace_sub(text):
     """Replaces certain substrings in the input text with predefined abbreviations.
-
 
     Args:
         text (str): The input text to be processed.

@@ -34,6 +34,15 @@ def detect_language(text):
 
 
 def hybrid_tokenize(text):
+    """
+    Tokenize text using a hybrid tokenizer based on language detection.
+
+    Args:
+        text (str): The text to be tokenized.
+
+    Returns:
+        list: A list of tokens.
+    """
 
     # special token for a Person's name
     name_token = "＠＠Ｎ"

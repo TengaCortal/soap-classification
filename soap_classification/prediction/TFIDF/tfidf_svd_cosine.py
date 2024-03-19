@@ -16,6 +16,19 @@ SOAPS_PATH = os.path.join(BASE_PATH, "../resources/soaps")
 def classify_with_cosine_similarity(
     query, X_train_tfidf_reduced, y_train, vectorizer, k=5
 ):
+    """
+    Classify a query using cosine similarity.
+
+    Args:
+        query (str): The query to be classified.
+        X_train_tfidf_reduced (array-like): Training data TF-IDF matrix with reduced dimensions.
+        y_train (array-like): Training data labels.
+        vectorizer (Vectorizer): The TF-IDF vectorizer used for transforming the data.
+        k (int, optional): The number of nearest neighbors to consider. Defaults to 5.
+
+    Returns:
+        dict: A dictionary containing normalized votes for each class based on cosine similarity.
+    """
     query_tfidf = vectorizer.transform([query])
     query_tfidf_reduced = svd.transform(query_tfidf)
 

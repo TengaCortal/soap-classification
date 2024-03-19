@@ -54,6 +54,12 @@ def predict_labels(classifier, partitioned_soap_notes):
 
 
 def get_classifier():
+    """
+    Retrieve or train and save a classifier for SOAP notes.
+
+    Returns:
+        classifier: Trained or retrieved classifier.
+    """
     # Train the classifier
     dataset_file = os.path.join(SOAPS_PATH, "labeled_dataset.csv")
     classifier_file = os.path.join(BASE_PATH, "../resources/trained_classifier.joblib")
@@ -73,6 +79,16 @@ def get_classifier():
 
 
 def predict_final_label(classifier, partitioned_soap):
+    """
+    Predict the final labels for partitioned SOAP notes.
+
+    Args:
+        classifier: Trained classifier.
+        partitioned_soap (list): A list containing partitioned SOAP notes.
+
+    Returns:
+        tuple: A tuple containing the partitioned SOAP notes and the predicted labels.
+    """
 
     # Predict labels for all parts
     predicted_labels = predict_labels(classifier, partitioned_soap)
@@ -178,6 +194,15 @@ def predict_final_label(classifier, partitioned_soap):
 
 
 def check_all_sections(predicted_labels):
+    """
+    Check if all sections (S, O, A, P) are present in the predicted labels.
+
+    Args:
+        predicted_labels (list): List of predicted labels for each part of the SOAP note.
+
+    Returns:
+        bool: True if all sections are present, False otherwise.
+    """
     all_sections_present = all(
         section in "".join(predicted_labels) for section in ["S", "O", "A", "P"]
     )
@@ -185,6 +210,12 @@ def check_all_sections(predicted_labels):
 
 
 def prediction_pipeline():
+    """
+    Perform the prediction pipeline on a set of partitioned SOAP notes.
+
+    Returns:
+        tuple: A tuple containing partitioned SOAP notes and their corresponding predicted labels.
+    """
 
     classifier = get_classifier()
     csv_file = os.path.join(SOAPS_PATH, "cleaned_classified_soaps.csv")
@@ -213,6 +244,14 @@ def prediction_pipeline():
 def generate_csv_with_section_labels(
     partitioned_soaps, predicted_labels_all, output_file
 ):
+    """
+    Generate a CSV file with section labels for partitioned SOAP notes.
+
+    Args:
+        partitioned_soaps (list): List of partitioned SOAP notes.
+        predicted_labels_all (list): List of predicted labels for each part of the SOAP notes.
+        output_file (str): Path to the output CSV file.
+    """
     with open(output_file, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         for i, partitioned_soap in enumerate(partitioned_soaps):
@@ -230,6 +269,15 @@ def generate_csv_with_section_labels(
 
 
 def for_demo(soap):
+    """
+    Perform prediction for a single SOAP note.
+
+    Args:
+        soap (str): The SOAP note to be processed.
+
+    Returns:
+        tuple: A tuple containing partitioned SOAP note and predicted labels.
+    """
     classifier = get_classifier()
     partitioned_soap, predict_label = predict_final_label(classifier, soap)
     return partitioned_soap, predict_label
