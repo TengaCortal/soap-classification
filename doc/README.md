@@ -112,7 +112,7 @@ Sphinx（スフィンクス）は、Pythonプロジェクトのドキュメン�
     ```
 
 >[!NOTE]
->HTMLベースのドキュメントは、build/htmlに保存されます。生成されたドキュメンテーションを表示するには、VS Codeの拡張機能を使用してindex.htmlをプレビューするか、ブラウザでlocalhost(http://127.0.0.1:3000/doc/build/html/index.html) で開けます。
+>HTMLベースのドキュメントは、build/htmlに保存されます。生成されたドキュメンテーションを表示するには、Live Preview と言うVS Codeの拡張機能を使用してindex.htmlをプレビューするか、ブラウザでlocalhost(http://127.0.0.1:3000/doc/build/html/index.html) で開けます。
 
 6. **ドキュメンテーションの更新方法**
 
