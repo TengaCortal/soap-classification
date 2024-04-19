@@ -1,309 +1,129 @@
 import joblib
 import os
 import sys
-import csv
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_PATH)
 
-import soap_partitioner as sp
-import train_tfidf as tt
+import soap_preprocessing as sp
+from soap_preprocessing import tokenize
 
 SOAPS_PATH = os.path.join(BASE_PATH, "../resources/soaps")
 
 
-def predict_label(classifier, soap_text):
-    """
-    Predict the label for a given SOAP text using the trained classifier.
+def classify_soap(classifier_file, soap, soap_type, mode):
 
-    Args:
-    - classifier (Pipeline): Trained classification pipeline.
-    - soap_text (str): SOAP text for prediction.
+    # load classifier
+    classifier = joblib.load(classifier_file)
 
-    Returns:
-    - predicted_label (str): Predicted label for the SOAP text.
-    """
-    # Predict the label
-    if isinstance(soap_text, str):
-        # Predict the label for a single SOAP text
-        predicted_label = classifier.predict([soap_text])[0]
-    elif isinstance(soap_text, list):
-        # Predict the labels for a list of SOAP texts
-        predicted_label = classifier.predict(soap_text)
-    else:
-        raise ValueError("Invalid input format. Expected str or list.")
+    if soap_type == "notes":
 
-    return predicted_label
+        # define separator according to partitioning mode
+        if mode == "separated-text":
+            separator = "\n"
+        elif mode == "free-text":
+            separator = "　"
+        elif mode == "none":
+            separator = "。"
 
-
-def predict_labels(classifier, partitioned_soap_notes):
-    """
-    Predict the section label for each part of partitioned SOAP notes using the trained classifier.
-
-    Args:
-    - classifier (Pipeline): Trained classification pipeline.
-    - partitioned_soap_notes (list): List of partitioned SOAP notes, where each item is a list of SOAP parts.
-
-    Returns:
-    - predicted_labels (list): List of lists containing predicted labels for each part of each SOAP note.
-    """
-    predicted_labels = []
-    for partitioned_soap in partitioned_soap_notes:
-        predicted_labels.append(predict_label(classifier, partitioned_soap))
-    return predicted_labels
-
-
-def get_classifier():
-    """
-    Retrieve or train and save a classifier for SOAP notes.
-
-    Returns:
-        classifier: Trained or retrieved classifier.
-    """
-    # Train the classifier
-    dataset_file = os.path.join(SOAPS_PATH, "labeled_dataset.csv")
-    classifier_file = os.path.join(BASE_PATH, "../resources/trained_classifier.joblib")
-
-    # Check if trained classifier exists, if not, train it
-    if not os.path.exists(classifier_file):
-        # Train the classifier
-        classifier = tt.train_tfidf_classifier(dataset_file)
-        # Save the trained classifier
-        tt.save_classifier(classifier, classifier_file)
-    else:
-        # Load the trained classifier
-        classifier = joblib.load(
-            classifier_file
-        )  # Load a trained classifier from a file
-    return classifier
-
-
-def predict_final_label(classifier, partitioned_soap):
-    """
-    Predict the final labels for partitioned SOAP notes.
-
-    Args:
-        classifier: Trained classifier.
-        partitioned_soap (list): A list containing partitioned SOAP notes.
-
-    Returns:
-        tuple: A tuple containing the partitioned SOAP notes and the predicted labels.
-    """
-
-    # Predict labels for all parts
-    predicted_labels = predict_labels(classifier, partitioned_soap)
-
-    predicted_label_first_part = predict_label(classifier, partitioned_soap[0])
-
-    # If the predicted label for the first part is neither "X" nor "S", choose the one with higher probability
-    if len(partitioned_soap) > 2 and predicted_label_first_part not in [
-        "X",
-        "S",
-    ]:
-        x_probability = classifier.predict_proba(partitioned_soap)[0][
-            classifier.classes_.tolist().index("X")
-        ]
-        s_probability = classifier.predict_proba([partitioned_soap])[0][
-            classifier.classes_.tolist().index("S")
-        ]
-        if x_probability > s_probability:
-            predicted_labels[0] = "X"
+        # partition SOAP notes
+        if type(soap) == str:
+            partitioned_soaps = [sp.partition_soap_text(soap, separator)]
         else:
-            predicted_labels[0] = "S"
+            partitioned_soaps = sp.partition_all_soap_text(soap, separator)
 
-    # If there are 3 or more parts and any section is missing, find the longest part and repartition it
-    if len(partitioned_soap) > 2 and not check_all_sections(predicted_labels):
-        # Find the index of the longest element in the partition
-        longest_element_index = max(
-            range(len(partitioned_soap)), key=lambda x: len(partitioned_soap[x])
-        )
-        longest_element = partitioned_soap[longest_element_index]
+        # print(f"Partitioned SOAP notes: {partitioned_soaps} \n")
 
-        # Sort indices to find the index of the second longest element in the partition if needed later
-        sorted_indices = sorted(
-            range(len(partitioned_soap)),
-            key=lambda x: len(partitioned_soap[x]),
-            reverse=True,
-        )
+        # tokenize SOAP notes
+        tokenized_soaps = []
+        for partitioned_soap in partitioned_soaps:
+            tokenized_soap = []
+            for partition in partitioned_soap:
+                tokenized_partition = sp.get_words(partition)
+                tokenized_soap.append(tokenized_partition)
+            tokenized_soaps.append(tokenized_soap)
 
-        # Repartition the longest element using space as a separator
-        repartitioned_parts_longest = sp.partition_soap_text(
-            longest_element, separator=" "
-        )
+        # print(f"Tokenized SOAP notes: {tokenized_soaps} \n")
 
-        # Predict labels for the repartitioned parts
-        repartitioned_labels_longest = predict_labels(
-            classifier, repartitioned_parts_longest
-        )
+        # predict labels
+        labels = []
+        for tokenized_soap in tokenized_soaps:
+            label = classifier.predict(tokenized_soap)
+            labels.append(label.tolist())
 
-        print("partitioned_soap")
-        print(partitioned_soap)
-        # Update the partitioned SOAP note and the predicted labels
-        partitioned_soap.pop(longest_element_index)  # Remove the longest element
-        predicted_labels.pop(
-            longest_element_index
-        )  # Remove the corresponding predicted label
-        for j, part in enumerate(repartitioned_parts_longest):
-            partitioned_soap.insert(
-                longest_element_index + j, part
-            )  # Insert the repartitioned parts
-            predicted_labels.insert(
-                longest_element_index + j, repartitioned_labels_longest[j]
-            )  # Insert the repartitioned labels
+    elif soap_type == "section":
 
-        # If any section is still missing, find the second longest element and repartition it
-        if not check_all_sections(predicted_labels):
-            second_longest_element_index = sorted_indices[1]
-            second_longest_element = partitioned_soap[second_longest_element_index]
+        # tokenize SOAP notes
+        tokenized_soap = [sp.get_words(soap)]
 
-            # Repartition the second longest element using space as a separator
-            repartitioned_parts_second_longest = sp.partition_soap_text(
-                second_longest_element, separator=" "
-            )
+        # predict label
+        labels = classifier.predict(tokenized_soap)
 
-            # Predict labels for the repartitioned parts
-            repartitioned_labels_second_longest = predict_labels(
-                classifier, repartitioned_parts_second_longest
-            )
-
-            # Update the partitioned SOAP note and the predicted labels
-            partitioned_soap.pop(
-                second_longest_element_index
-            )  # Remove the second longest element
-            predicted_labels.pop(
-                second_longest_element_index
-            )  # Remove the corresponding predicted label
-            for j, part in enumerate(repartitioned_parts_second_longest):
-                partitioned_soap.insert(
-                    second_longest_element_index + j, part
-                )  # Insert the repartitioned parts
-                predicted_labels.insert(
-                    second_longest_element_index + j,
-                    repartitioned_labels_second_longest[j],
-                )  # Insert the repartitioned labels
-
-            if (
-                len(predicted_labels) >= 5
-                and check_all_sections(predicted_labels)
-                and predicted_labels[-3],
-                predicted_labels[-2] == "P",
-            ):
-                predicted_labels[-1] = "".join("P")
-
-    return partitioned_soap, predicted_labels
-
-
-def check_all_sections(predicted_labels):
-    """
-    Check if all sections (S, O, A, P) are present in the predicted labels.
-
-    Args:
-        predicted_labels (list): List of predicted labels for each part of the SOAP note.
-
-    Returns:
-        bool: True if all sections are present, False otherwise.
-    """
-    all_sections_present = all(
-        section in "".join(predicted_labels) for section in ["S", "O", "A", "P"]
-    )
-    return all_sections_present
-
-
-def prediction_pipeline():
-    """
-    Perform the prediction pipeline on a set of partitioned SOAP notes.
-
-    Returns:
-        tuple: A tuple containing partitioned SOAP notes and their corresponding predicted labels.
-    """
-
-    classifier = get_classifier()
-    csv_file = os.path.join(SOAPS_PATH, "cleaned_classified_soaps.csv")
-    cleaned_soaps = sp.remove_annotations(csv_file)
-    separator = "。"
-    partitioned_soaps = sp.partition_all_soap_text(cleaned_soaps, separator)
-    partitioned_soaps = partitioned_soaps[10952:10953]
-
-    predicted_labels_all = []
-    partitioned_soap_all = []
-    for i, partitioned_soap in enumerate(partitioned_soaps):
-        if i % 1000 == 0:
-            print("Processing SOAP Note:", i)
-
-        final_partitioned_soap, final_predicted_labels = predict_final_label(
-            classifier, partitioned_soap
-        )
-
-        # Append predicted labels for current SOAP note to the list
-        predicted_labels_all.append(final_predicted_labels)
-        partitioned_soap_all.append(final_partitioned_soap)
-
-    return partitioned_soap_all, predicted_labels_all
-
-
-def generate_csv_with_section_labels(
-    partitioned_soaps, predicted_labels_all, output_file
-):
-    """
-    Generate a CSV file with section labels for partitioned SOAP notes.
-
-    Args:
-        partitioned_soaps (list): List of partitioned SOAP notes.
-        predicted_labels_all (list): List of predicted labels for each part of the SOAP notes.
-        output_file (str): Path to the output CSV file.
-    """
-    with open(output_file, "w", newline="", encoding="utf-8") as csvfile:
-        writer = csv.writer(csvfile)
-        for i, partitioned_soap in enumerate(partitioned_soaps):
-            labeled_soap_note = ""
-            prev_label = None
-            for j, soap_part in enumerate(partitioned_soap):
-                current_label = predicted_labels_all[i][j]
-                if current_label == prev_label:
-                    labeled_soap_note += soap_part.strip() + " "
-                else:
-                    labeled_soap_note += f"{current_label}: {soap_part.strip()} "
-                prev_label = current_label
-            if labeled_soap_note:
-                writer.writerow([labeled_soap_note.strip()])
-
-
-def for_demo(soap):
-    """
-    Perform prediction for a single SOAP note.
-
-    Args:
-        soap (str): The SOAP note to be processed.
-
-    Returns:
-        tuple: A tuple containing partitioned SOAP note and predicted labels.
-    """
-    classifier = get_classifier()
-    partitioned_soap, predict_label = predict_final_label(classifier, soap)
-    return partitioned_soap, predict_label
+    return labels
 
 
 if __name__ == "__main__":
-    soap = "023\/07\/19　初診大分前から両目に黒い物が見える。5月か6月位に夜になると、右眼の奥にピカっと光る物が何度か見えた。今は治まっている。夜勤のお仕事。散瞳検査OK。歩いて来院。S)両目　眼の際　痒み+　目脂は出ない。眼を抑えるようにごしごしかいていたのでそれはやめるよう伝えた。２ｗ間隔位で来ていただいてるので今日は視力検査しませんでした。両AH+　アレジオンLX両2　処方以前緑内障と言われていたIOP　14\/12ｍｍHg　→15\/15mmHg　やや高めOCT NFLD+ R>L　眼鏡は左が過矯正　眼鏡改作 try眼鏡処方（2023\/08\/16）改作を勧めたタプロス両1　do（2023\/09\/06-）経過観察　1M"
-    separator = "。"
-    partitioned_soaps = sp.partition_soap_text(soap, separator)
-    # partitioned_soaps, predicted_labels_all = prediction_pipeline()
-    # print(partitioned_soaps)
-    # print()
-    # print(predicted_labels_all)
-    # # Print partitioned SOAP note and the associated predicted labels
-    # for i, partitioned_soap in enumerate(partitioned_soaps):
-    #     print("SOAP Note:", i + 1)
-    #     for j, soap_part in enumerate(partitioned_soap):
-    #         print("Part", j + 1, ":", soap_part)
-    #         print("Predicted Label:", predicted_labels_all[i][j])
-    #     print()
 
-    # # generate the CSV file
-    # generate_csv_with_section_labels(
-    #     partitioned_soaps,
-    #     predicted_labels_all,
-    #     os.path.join(SOAPS_PATH, "tfidf_sectionized_soaps.csv"),
-    # )
+    csv_file = os.path.join(SOAPS_PATH, "cleaned_classified_soaps.csv")
 
-    for_demo(soap)
+    classifier_file = os.path.join(BASE_PATH, "../resources/tfidf_classifier.joblib")
+
+    # Testing with different types of SOAP inputs
+    mode = "free-text"
+    cleaned_soaps = sp.remove_annotations(csv_file, mode)
+    clius_soap = cleaned_soaps[888:889]
+    clius_labels = classify_soap(classifier_file, clius_soap, "notes", mode)
+    print(f"CLIUS SOAP labels: {clius_labels} \n")
+
+    mode = "separated-text"
+    cleaned_soaps = sp.remove_annotations(csv_file, mode)
+    separated_clius_soap = cleaned_soaps[888:889]
+    separated_clius_labels = classify_soap(
+        classifier_file, separated_clius_soap, "notes", mode
+    )
+    print(f"Separated CLIUS SOAP labels: {separated_clius_labels} \n")
+
+    gpt_soap = "患者は今日の訪問時に胸の痛みを訴えています。痛みは3週間前から始まり、1日に3回以上、約1分間続きます。痛みの増強は動作に関連しておらず、冷や汗や嘔気はありません。患者は心筋梗塞の既往歴があり、心配しています。体温は36.4 ℃で、収縮期血圧は158 mmHg、拡張期血圧は98 mmHgです。体重は76.2 kgであり、心電図には明らかな異常はありません。診察時には胸痛の症状はありませんでした。患者の症状は心筋梗塞と関連がある可能性がありますが、現在の検査結果では異常は見られません。ただし、患者の心配を考慮し、負荷心電図検査をお勧めします。次回の診察時には負荷心電図検査を行い、その結果に基づいて適切な処置を検討します。胸痛が再発した場合は、直ちに診察を受けるように指示します。"
+    gpt_labels = classify_soap(classifier_file, gpt_soap, "notes", "none")
+    print(f"GPT SOAP labels: {gpt_labels} \n")
+
+    O_section = "収縮期血圧 130 mmHg 拡張期血圧 61 mmHg 脈拍 90 bpm100歳体操へ行ってる"
+    label = classify_soap(classifier_file, O_section, "section", "none")
+    print(f"O section predicted label: {label} \n")
+
+    # # repartition with space as separator
+    # for partitioned_soap in partitioned_soaps:
+    #     longest_partition_index = np.argmax(
+    #         [len(partition) for partition in partitioned_soap]
+    #     )
+
+    #     # Split the longest partition into multiple partitions
+    #     longest_partition = partitioned_soap[longest_partition_index]
+    #     repartitioned_longest_partition = longest_partition.split(
+    #         "　"
+    #     )  # Repartition using the separator
+
+    #     # Replace the longest partition with the repartitioned partitions
+    #     partitioned_soap.pop(longest_partition_index)
+    #     partitioned_soap.extend(repartitioned_longest_partition)
+
+    # print(f"Repartitioned SOAP notes: {partitioned_soaps[9:10]} \n")
+
+    # partitioned_soaps = pd.DataFrame(partitioned_soaps)
+    # tokenized_soaps = partitioned_soaps.applymap(tt.get_words)
+    # print(f"Tokenized SOAP notes: {tokenized_soaps[9:11]} \n")
+
+    # # partition soap
+    # soap = "眉間部（鼻背部）皮膚腫瘍 生まれたときにはなかった 鶏頭状、ＶＶ疑い。ＣＯ２やＣｒｙｏも説明されているが、保険でのオペ切除を希望されている 傷跡の問題、ＶＶなので大きくとっても再発のリスクは残るので、。ぎりぎりの切除とした。６－０ＢＮで２針縫合。 １W抜糸"
+    # separator = "。"
+    # partitioned_soaps = sp.partition_soap_text(soap, separator)
+    # print(f"Partitioned SOAP notes: {partitioned_soaps} \n")
+
+    # # tokenize partitions
+    # partitioned_soaps = pd.DataFrame(partitioned_soaps)
+    # tokenized_soaps = partitioned_soaps[0].apply(tt.get_words)
+    # print(f"Tokenized SOAP notes: {tokenized_soaps} \n")
+
+    # # predict labels
+    # predicted_labels = classifier.predict(tokenized_soaps)
+    # print(predicted_labels)
