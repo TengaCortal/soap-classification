@@ -7,8 +7,34 @@ sys.path.append(BASE_PATH)
 
 import soap_preprocessing as sp
 from soap_preprocessing import tokenize
+import train_tfidf as tt
 
 SOAPS_PATH = os.path.join(BASE_PATH, "../resources/soaps")
+
+
+def get_classifier():
+    """
+    Retrieve or train and save a classifier for SOAP notes.
+
+    Returns:
+        classifier: Trained or retrieved classifier.
+    """
+    # Train the classifier
+    dataset_file = os.path.join(SOAPS_PATH, "labeled_dataset.csv")
+    classifier_file = os.path.join(BASE_PATH, "../resources/trained_classifier.joblib")
+
+    # Check if trained classifier exists, if not, train it
+    if not os.path.exists(classifier_file):
+        # Train the classifier
+        classifier = tt.train_tfidf_classifier(dataset_file)
+        # Save the trained classifier
+        tt.save_classifier(classifier, classifier_file)
+    else:
+        # Load the trained classifier
+        classifier = joblib.load(
+            classifier_file
+        )  # Load a trained classifier from a file
+    return classifier
 
 
 def classify_soap(classifier_file, soap, soap_type, mode):
@@ -60,6 +86,21 @@ def classify_soap(classifier_file, soap, soap_type, mode):
         labels = classifier.predict(tokenized_soap)
 
     return labels
+
+
+def for_demo(soap):
+    """
+    Perform prediction for a single SOAP note.
+
+    Args:
+        soap (str): The SOAP note to be processed.
+
+    Returns:
+        tuple: A tuple containing partitioned SOAP note and predicted labels.
+    """
+    classifier = get_classifier()
+    partitioned_soap, predicted_labels = classify_soap(classifier, soap)
+    return partitioned_soap, predicted_labels
 
 
 if __name__ == "__main__":
