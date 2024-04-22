@@ -21,14 +21,13 @@ def get_classifier():
     """
     # Train the classifier
     dataset_file = os.path.join(SOAPS_PATH, "labeled_dataset.csv")
-    classifier_file = os.path.join(BASE_PATH, "../resources/trained_classifier.joblib")
+    classifier_file = os.path.join(BASE_PATH, "../resources/tfidf_classifier.joblib")
 
     # Check if trained classifier exists, if not, train it
     if not os.path.exists(classifier_file):
+        print("Training the SOAP classifier")
         # Train the classifier
-        classifier = tt.train_tfidf_classifier(dataset_file)
-        # Save the trained classifier
-        tt.save_classifier(classifier, classifier_file)
+        classifier = tt.train_tfidf_classifier(dataset_file, classifier_file)
     else:
         # Load the trained classifier
         classifier = joblib.load(
@@ -37,19 +36,16 @@ def get_classifier():
     return classifier
 
 
-def classify_soap(classifier_file, soap, soap_type, mode):
-
-    # load classifier
-    classifier = joblib.load(classifier_file)
+def classify_soap(classifier, soap, soap_type, sep):
 
     if soap_type == "notes":
 
         # define separator according to partitioning mode
-        if mode == "separated-text":
+        if sep == "newline":
             separator = "\n"
-        elif mode == "free-text":
+        elif sep == "space":
             separator = "　"
-        elif mode == "none":
+        elif sep == "point":
             separator = "。"
 
         # partition SOAP notes
@@ -77,6 +73,8 @@ def classify_soap(classifier_file, soap, soap_type, mode):
             label = classifier.predict(tokenized_soap)
             labels.append(label.tolist())
 
+        return partitioned_soaps, labels
+
     elif soap_type == "section":
 
         # tokenize SOAP notes
@@ -85,10 +83,10 @@ def classify_soap(classifier_file, soap, soap_type, mode):
         # predict label
         labels = classifier.predict(tokenized_soap)
 
-    return labels
+        return labels
 
 
-def for_demo(soap):
+def for_demo(soap_data, soap_type, sep):
     """
     Perform prediction for a single SOAP note.
 
@@ -99,8 +97,8 @@ def for_demo(soap):
         tuple: A tuple containing partitioned SOAP note and predicted labels.
     """
     classifier = get_classifier()
-    partitioned_soap, predicted_labels = classify_soap(classifier, soap)
-    return partitioned_soap, predicted_labels
+
+    return classify_soap(classifier, soap_data, soap_type, sep)
 
 
 if __name__ == "__main__":
@@ -131,40 +129,3 @@ if __name__ == "__main__":
     O_section = "収縮期血圧 130 mmHg 拡張期血圧 61 mmHg 脈拍 90 bpm100歳体操へ行ってる"
     label = classify_soap(classifier_file, O_section, "section", "none")
     print(f"O section predicted label: {label} \n")
-
-    # # repartition with space as separator
-    # for partitioned_soap in partitioned_soaps:
-    #     longest_partition_index = np.argmax(
-    #         [len(partition) for partition in partitioned_soap]
-    #     )
-
-    #     # Split the longest partition into multiple partitions
-    #     longest_partition = partitioned_soap[longest_partition_index]
-    #     repartitioned_longest_partition = longest_partition.split(
-    #         "　"
-    #     )  # Repartition using the separator
-
-    #     # Replace the longest partition with the repartitioned partitions
-    #     partitioned_soap.pop(longest_partition_index)
-    #     partitioned_soap.extend(repartitioned_longest_partition)
-
-    # print(f"Repartitioned SOAP notes: {partitioned_soaps[9:10]} \n")
-
-    # partitioned_soaps = pd.DataFrame(partitioned_soaps)
-    # tokenized_soaps = partitioned_soaps.applymap(tt.get_words)
-    # print(f"Tokenized SOAP notes: {tokenized_soaps[9:11]} \n")
-
-    # # partition soap
-    # soap = "眉間部（鼻背部）皮膚腫瘍 生まれたときにはなかった 鶏頭状、ＶＶ疑い。ＣＯ２やＣｒｙｏも説明されているが、保険でのオペ切除を希望されている 傷跡の問題、ＶＶなので大きくとっても再発のリスクは残るので、。ぎりぎりの切除とした。６－０ＢＮで２針縫合。 １W抜糸"
-    # separator = "。"
-    # partitioned_soaps = sp.partition_soap_text(soap, separator)
-    # print(f"Partitioned SOAP notes: {partitioned_soaps} \n")
-
-    # # tokenize partitions
-    # partitioned_soaps = pd.DataFrame(partitioned_soaps)
-    # tokenized_soaps = partitioned_soaps[0].apply(tt.get_words)
-    # print(f"Tokenized SOAP notes: {tokenized_soaps} \n")
-
-    # # predict labels
-    # predicted_labels = classifier.predict(tokenized_soaps)
-    # print(predicted_labels)
