@@ -8,11 +8,17 @@ import os
 import numpy as np
 from sklearn.utils.class_weight import compute_class_weight
 import warnings
+import sys
 
 # Suppress warnings
 warnings.filterwarnings("ignore")
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+sys.path.append(BASE_PATH)
+
+os.environ["MECABRC"] = "/opt/homebrew/etc/mecabrc"
+import prediction.soap_preprocessing as sp
 
 
 def evaluate_fairness(data, subgroup_column):
@@ -26,21 +32,26 @@ def evaluate_fairness(data, subgroup_column):
     Returns:
         tuple: A tuple containing percentage of correct predictions and subgroup counts.
     """
+    # Tokenization
+    data["tokens"] = data["soap"].apply(sp.get_words)
+
     # Split the data into train and test sets
     X_train, X_test, y_train, y_test = train_test_split(
-        data["soap"], data["label"], test_size=0.15, random_state=42
+        data["tokens"], data["label"], test_size=0.3, random_state=42
     )
+
+    # TF-IDF representation
+    vectorizer = TfidfVectorizer(tokenizer=sp.tokenize, lowercase=False)
 
     # Compute class weights
     class_weights = compute_class_weight(
         class_weight="balanced", classes=np.unique(y_train), y=y_train
     )
+
     class_weights_dict = {
         class_label: weight
         for class_label, weight in zip(np.unique(y_train), class_weights)
     }
-    # TF-IDF representation
-    vectorizer = TfidfVectorizer()
 
     # Define the classifier
     classifier = make_pipeline(
@@ -74,6 +85,7 @@ def evaluate_fairness(data, subgroup_column):
 
 
 if __name__ == "__main__":
+    print(BASE_PATH)
     # Load the dataset
     data = pd.read_csv(os.path.join(BASE_PATH, "fairness/fairness_labeled_dataset.csv"))
 

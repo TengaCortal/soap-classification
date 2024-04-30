@@ -6,6 +6,7 @@ import numpy as np
 sys.path.append("..")  # ルートディレクトリへのパスを追加
 import tfidf_classifier as tc
 
+os.environ["MECABRC"] = "/opt/homebrew/etc/mecabrc"
 
 abs_path = os.path.dirname(os.path.abspath(__file__))
 base_path = os.path.join(abs_path, "..")

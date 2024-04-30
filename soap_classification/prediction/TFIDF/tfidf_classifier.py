@@ -40,13 +40,9 @@ def classify_soap(classifier, soap, soap_type, sep):
 
     if soap_type == "notes":
 
-        # define separator according to partitioning mode
-        if sep == "newline":
-            separator = "\n"
-        elif sep == "space":
-            separator = "　"
-        elif sep == "point":
-            separator = "。"
+        # Define separator according to partitioning mode
+        separator_mapping = {"newline": "\n", "space": "　", "point": "。"}
+        separator = separator_mapping.get(sep, None)
 
         # partition SOAP notes
         if type(soap) == str:
