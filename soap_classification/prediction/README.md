@@ -29,19 +29,3 @@ The TF-IDF score for a term in a document is obtained by multiplying its TF and 
 TF-IDF(t, d) = TF(t, d) * IDF(t)
 
 TF-IDF highlights terms that are frequent in a document but rare in the corpus, thus giving more weight to terms that are likely to be more informative and discriminative. It is commonly used in various natural language processing tasks such as text classification, information retrieval, and document clustering.
-
-### 1-4. Implementation of the TF-IDF classifier
-
-Let's break down the process step by step:
-
-1. **Input**: The input to the TF-IDF classifier is a list of partitioned SOAP notes. Each SOAP note is initially divided into sections using "。" as a separator.
-
-2. **Prediction**: The classifier predicts the section label for each partition in each SOAP note. For example, if a SOAP note has three partitions, the classifier predicts the labels for each of these partitions.
-
-3. **Check for all labels (S, O, A, P)**: After prediction, if any partitioned SOAP note doesn't have all four labels (S, O, A, P), it indicates that the initial partitioning might not have been effective.
-
-4. **Repartitioning**: In such cases, the system identifies the longest partition in the partitioned SOAP note. It then repartitions this longest partition using " " (space) as a separator. This step aims to break down the longest partition into smaller units to capture more comprehensive sections.
-
-5. **Prediction on new partitions**: After repartitioning, the classifier predicts the section labels for the newly formed partitions.
-
-6. **Updating predictions**: Finally, the predicted labels are updated based on the predictions made after repartitioning. These updated labels replace the previous predictions for the partitions in the SOAP note.
