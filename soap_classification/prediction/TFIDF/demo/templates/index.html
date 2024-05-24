@@ -69,6 +69,28 @@
             background-color: #f9f9f9;
             margin-bottom: 10px;
             border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .copy-button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
         }
     </style>
 
@@ -97,13 +119,17 @@
             <button type="submit">分類</button>
         </form>
         <div id="categories" class="categories"></div>
+        <div class="button-container">
+            <button id="copy-all-button" class="copy-button" onclick="copyToClipboard()">Copy</button>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('soap-form');
             const categoriesDiv = document.getElementById('categories');
-    
+            const copyButton = document.getElementById('copy-all-button');
+
             form.addEventListener('submit', function(event) {
                 event.preventDefault(); // フォームのデフォルトの動作を停止
     
@@ -122,14 +148,46 @@
                 .then(response => response.json())
                 .then(data => {
                     // 分類結果を表示
-                    categoriesDiv.innerHTML = '<div class="category">' + data.soap + '</div>';
-                    categoriesDiv.innerHTML = '<div class="category">' + data.result + '</div>';
+                    categoriesDiv.innerHTML = '';
+                    // Check if the response contains data
+                if (data && data.response) {
+                    const responseText = data.response;
+                    const lines = responseText.split('\n');
+                    
+                    // Loop through each line and create a category
+                    lines.forEach(line => {
+                        const categoryDiv = document.createElement('div');
+                        categoryDiv.classList.add('category');
+                        categoryDiv.textContent = line;
+                        categoriesDiv.appendChild(categoryDiv);
+                    });
+
+                    // Show the copy button
+                    copyButton.style.display = 'block';
+                    copyButton.setAttribute('data-response', responseText);
+
+                    } else {
+                        alert("No response from the server.");
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
             });
         });
+        function copyToClipboard() {
+            const copyButton = document.getElementById('copy-all-button');
+            const text = copyButton.getAttribute('data-response');
+            const tempInput = document.createElement('textarea');
+            tempInput.style.position = 'absolute';
+            tempInput.style.left = '-9999px';
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('Copied to clipboard: ' + text);
+        }
     </script>
     
 </body>

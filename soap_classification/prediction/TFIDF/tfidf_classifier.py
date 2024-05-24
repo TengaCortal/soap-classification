@@ -11,6 +11,8 @@ import train_tfidf as tt
 
 SOAPS_PATH = os.path.join(BASE_PATH, "../resources/soaps")
 
+os.environ["MECABRC"] = "/opt/homebrew/etc/mecabrc"
+
 
 def get_classifier():
     """
@@ -50,8 +52,6 @@ def classify_soap(classifier, soap, soap_type, sep):
         else:
             partitioned_soaps = sp.partition_all_soap_text(soap, separator)
 
-        # print(f"Partitioned SOAP notes: {partitioned_soaps} \n")
-
         # tokenize SOAP notes
         tokenized_soaps = []
         for partitioned_soap in partitioned_soaps:
@@ -60,8 +60,6 @@ def classify_soap(classifier, soap, soap_type, sep):
                 tokenized_partition = sp.get_words(partition)
                 tokenized_soap.append(tokenized_partition)
             tokenized_soaps.append(tokenized_soap)
-
-        # print(f"Tokenized SOAP notes: {tokenized_soaps} \n")
 
         # predict labels
         labels = []
@@ -75,7 +73,6 @@ def classify_soap(classifier, soap, soap_type, sep):
 
         # tokenize SOAP notes
         tokenized_soap = [sp.get_words(soap)]
-
         # predict label
         labels = classifier.predict(tokenized_soap)
 
@@ -101,27 +98,28 @@ if __name__ == "__main__":
 
     csv_file = os.path.join(SOAPS_PATH, "cleaned_classified_soaps.csv")
 
-    classifier_file = os.path.join(BASE_PATH, "../resources/tfidf_classifier.joblib")
-
+    classifier = get_classifier()
     # Testing with different types of SOAP inputs
     mode = "free-text"
+    sep = "space"
     cleaned_soaps = sp.remove_annotations(csv_file, mode)
     clius_soap = cleaned_soaps[888:889]
-    clius_labels = classify_soap(classifier_file, clius_soap, "notes", mode)
+    clius_labels = classify_soap(classifier, clius_soap, "notes", sep)
     print(f"CLIUS SOAP labels: {clius_labels} \n")
 
     mode = "separated-text"
+    sep = "newline"
     cleaned_soaps = sp.remove_annotations(csv_file, mode)
     separated_clius_soap = cleaned_soaps[888:889]
     separated_clius_labels = classify_soap(
-        classifier_file, separated_clius_soap, "notes", mode
+        classifier, separated_clius_soap, "notes", sep
     )
     print(f"Separated CLIUS SOAP labels: {separated_clius_labels} \n")
 
     gpt_soap = "患者は今日の訪問時に胸の痛みを訴えています。痛みは3週間前から始まり、1日に3回以上、約1分間続きます。痛みの増強は動作に関連しておらず、冷や汗や嘔気はありません。患者は心筋梗塞の既往歴があり、心配しています。体温は36.4 ℃で、収縮期血圧は158 mmHg、拡張期血圧は98 mmHgです。体重は76.2 kgであり、心電図には明らかな異常はありません。診察時には胸痛の症状はありませんでした。患者の症状は心筋梗塞と関連がある可能性がありますが、現在の検査結果では異常は見られません。ただし、患者の心配を考慮し、負荷心電図検査をお勧めします。次回の診察時には負荷心電図検査を行い、その結果に基づいて適切な処置を検討します。胸痛が再発した場合は、直ちに診察を受けるように指示します。"
-    gpt_labels = classify_soap(classifier_file, gpt_soap, "notes", "none")
+    gpt_labels = classify_soap(classifier, gpt_soap, "notes", "point")
     print(f"GPT SOAP labels: {gpt_labels} \n")
 
     O_section = "収縮期血圧 130 mmHg 拡張期血圧 61 mmHg 脈拍 90 bpm100歳体操へ行ってる"
-    label = classify_soap(classifier_file, O_section, "section", "none")
+    label = classify_soap(classifier, O_section, "section", "none")
     print(f"O section predicted label: {label} \n")

@@ -17,6 +17,8 @@ BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_PATH)
 SOAPS_PATH = os.path.join(BASE_PATH, "../resources/soaps")
 
+os.environ["MECABRC"] = "/opt/homebrew/etc/mecabrc"
+
 import soap_preprocessing as sp
 
 
