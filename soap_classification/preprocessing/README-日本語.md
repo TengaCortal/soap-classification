@@ -1,6 +1,10 @@
 # SOAPテキストの前処理とハイブリッドトークン化
 このフォルダでは、SOAPテキストの前処理とハイブリッドトークン化のためのソースコードが提供されています。
 
+
+> [!WARNING]
+> ハイブリッドトークン化はSOAP分類モデルの最終版では使用されませんでした。代わりに、Manbyo語彙を追加したMeCabトークナイザーを使用しました。
+
 > [!IMPORTANT]
 > hybrid_tokenization.pyを実行するには、OSとインストールに応じてmecabrcとmecab-ipadic-neologdへのパスを適応する必要があります。
 

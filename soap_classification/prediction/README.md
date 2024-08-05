@@ -29,3 +29,8 @@ The TF-IDF score for a term in a document is obtained by multiplying its TF and 
 TF-IDF(t, d) = TF(t, d) * IDF(t)
 
 TF-IDF highlights terms that are frequent in a document but rare in the corpus, thus giving more weight to terms that are likely to be more informative and discriminative. It is commonly used in various natural language processing tasks such as text classification, information retrieval, and document clustering.
+
+## 2. Demo
+
+To run demo execute demoUI.py
+

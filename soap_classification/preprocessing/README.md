@@ -1,5 +1,8 @@
 # Pre-processing SOAP text and hybrid tokenization
-For the time being, this folder provides source code for pre-processing SOAP text for NLP and hybrid tokenization.<br>
+This folder provides source code for pre-processing SOAP text for NLP and hybrid tokenization.<br>
+
+> [!WARNING]
+> The hybrid tokenization was not used in the final version of the SOAP classification model. Instead we used the MeCab tokenizer with Manbyo vocabulary added to it.
 
 > [!IMPORTANT]
 > To run hybrid_tokenization.py, you might need to adapt the paths to mecabrc and mecab-ipadic-neologd depending on your OS and installation
