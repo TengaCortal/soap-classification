@@ -4,6 +4,10 @@
 
 This project involves the development of a Machine Learning based SOAP (Subjective, Objective, Assessment, Plan) classification system. 
 
+## Data Availability
+
+Please note that the data used in this project is not publicly available due to privacy concerns.
+
 
 ## Motivation
 
